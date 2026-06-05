@@ -5,34 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ติดตามการสอนรายชั่วโมง | โรงเรียนดอนสีนวน</title>
   <style>
+    @import url("https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&display=swap");
+
     :root {
-      --ink: #0f172a;
-      --muted: #64748b;
-      --line: #e2e8f0;
+      --ink: #1a2233;
+      --muted: #6b7a99;
+      --line: #dde3ee;
       --panel: #ffffff;
-      --page: #f8fafc;
-      --brand: #2563eb;
-      --brand-2: #0f766e;
-      --warn: #d97706;
-      --danger: #dc2626;
-      --ok: #16a34a;
-      --soft: #eff6ff;
-      --blue-soft: #eef5ff;
-      --amber-soft: #fffbeb;
+      --page: #f4f6fb;
+      --brand: #1a3a6b;
+      --brand-2: #0f5c52;
+      --warn: #7d4000;
+      --danger: #b42318;
+      --ok: #0f766e;
+      --soft: #d9e8f7;
+      --blue-soft: #d9e8f7;
+      --amber-soft: #fff9e6;
+      --afternoon-soft: #ffe8cc;
       --rose-soft: #fff1f2;
-      --radius: 8px;
+      --radius: 10px;
       --shadow: none;
       color-scheme: light;
-      font-family: "Noto Sans Thai", "Tahoma", system-ui, sans-serif;
+      font-family: "Sarabun", sans-serif;
     }
 
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      background:
-        radial-gradient(circle at top left, rgba(37, 99, 235, .08), transparent 32rem),
-        var(--page);
+      background: var(--page);
       color: var(--ink);
       min-width: 320px;
     }
@@ -42,22 +43,24 @@
     }
 
     button {
-      border: 1px solid var(--line);
+      border: 1.5px solid var(--line);
       background: #fff;
       color: var(--ink);
       border-radius: 8px;
       min-height: 38px;
-      padding: 7px 12px;
+      padding: 8px 12px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 7px;
       justify-content: center;
+      font-size: 12.5px;
+      font-weight: 600;
       transition: .15s ease;
       white-space: nowrap;
     }
 
-    button:hover { border-color: #93c5fd; background: #f8fbff; transform: translateY(-1px); }
+    button:hover { border-color: var(--brand); background: #f7f9fd; transform: translateY(-1px); }
     button.primary { background: var(--brand); border-color: var(--brand); color: #fff; }
     button.blue { background: var(--brand-2); border-color: var(--brand-2); color: #fff; }
     button.danger { background: #fff; border-color: #f0b8b1; color: var(--danger); }
@@ -72,9 +75,10 @@
     }
 
     header {
-      background: rgba(255, 255, 255, .92);
-      border-bottom: 1px solid var(--line);
-      backdrop-filter: blur(10px);
+      background: var(--brand);
+      color: #fff;
+      border-bottom: 0;
+      box-shadow: rgba(26, 58, 107, .22) 0 2px 14px;
       position: sticky;
       top: 0;
       z-index: 20;
@@ -83,7 +87,7 @@
     .topbar {
       max-width: 1440px;
       margin: 0 auto;
-      padding: 12px 18px;
+      padding: 18px 28px;
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 16px;
@@ -98,10 +102,10 @@
     }
 
     .school-mark {
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
       border-radius: 8px;
-      background: var(--brand);
+      background: rgba(255, 255, 255, .14);
       color: #fff;
       display: grid;
       place-items: center;
@@ -111,13 +115,13 @@
     }
 
     h1 {
-      font-size: 18px;
+      font-size: 19px;
       margin: 0;
       line-height: 1.3;
     }
 
     .subtitle {
-      color: var(--muted);
+      color: rgba(255, 255, 255, .78);
       font-size: 12px;
       margin-top: 2px;
     }
@@ -130,11 +134,28 @@
       justify-content: flex-end;
     }
 
+    header .top-actions button {
+      background: rgba(255, 255, 255, .08);
+      border: 0;
+      color: rgba(255, 255, 255, .78);
+      border-radius: 8px 8px 0 0;
+      padding: 8px 18px;
+      min-height: 36px;
+      font-weight: 500;
+    }
+
+    header .top-actions button:hover,
+    header .top-actions button.blue {
+      background: var(--page);
+      color: var(--brand);
+      transform: none;
+    }
+
     main {
       max-width: 1440px;
       width: 100%;
       margin: 0 auto;
-      padding: 18px;
+      padding: 20px 28px;
       display: grid;
       grid-template-columns: 280px 1fr;
       gap: 14px;
@@ -144,7 +165,7 @@
     .side, .workspace, .editor-panel, .modal-panel {
       background: var(--panel);
       border: 1px solid var(--line);
-      border-radius: var(--radius);
+      border-radius: 12px;
       box-shadow: var(--shadow);
     }
 
@@ -153,7 +174,7 @@
       top: 82px;
       max-height: calc(100vh - 102px);
       overflow: auto;
-      background: rgba(255, 255, 255, .96);
+      background: #fff;
     }
 
     .panel-head {
@@ -163,6 +184,16 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
+    }
+
+    .filter-head {
+      background: #fff;
+    }
+
+    .filter-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
     }
 
     .panel-title {
@@ -177,6 +208,10 @@
       gap: 10px;
     }
 
+    .filter-stack[hidden] {
+      display: none;
+    }
+
     label {
       font-size: 13px;
       font-weight: 700;
@@ -187,7 +222,7 @@
 
     input, select, textarea {
       width: 100%;
-      border: 1px solid var(--line);
+      border: 1.5px solid var(--line);
       border-radius: 8px;
       padding: 9px 10px;
       background: #fff;
@@ -222,9 +257,9 @@
 
     .stat {
       border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 10px;
-      background: linear-gradient(180deg, #ffffff, #f8fbff);
+      border-radius: 10px;
+      padding: 12px 18px;
+      background: #fff;
     }
 
     .stat strong {
@@ -249,7 +284,7 @@
     .progress > i {
       display: block;
       height: 100%;
-      background: linear-gradient(90deg, var(--brand), var(--brand-2));
+      background: var(--brand);
       width: 0;
     }
 
@@ -269,8 +304,18 @@
 
     .course-chip.active {
       border-color: var(--brand);
-      background: var(--soft);
-      color: #1d4ed8;
+      background: var(--brand);
+      color: #fff;
+    }
+
+    .course-chip {
+      border-radius: 20px;
+      min-height: 44px;
+      border-width: 1.5px;
+    }
+
+    .course-chip.active .chip-meta {
+      color: rgba(255, 255, 255, .76);
     }
 
     .chip-title {
@@ -287,7 +332,7 @@
     .workspace {
       min-width: 0;
       overflow: hidden;
-      background: rgba(255, 255, 255, .98);
+      background: #fff;
     }
 
     .workspace-head {
@@ -329,9 +374,9 @@
 
     .mini {
       border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 8px 10px;
-      background: #f8fafc;
+      border-radius: 10px;
+      padding: 12px 18px;
+      background: #fff;
     }
 
     .mini b { display: block; font-size: 18px; }
@@ -358,15 +403,15 @@
     }
 
     th {
-      background: #f1f5f9;
+      background: var(--soft);
       position: sticky;
       top: 0;
       z-index: 5;
       font-size: 12px;
-      color: #475467;
+      color: var(--brand);
     }
 
-    tr:hover td { background: #f8fbff; }
+    tr:hover td { background: #f7f9fd; }
     td.hour-cell { font-weight: 800; width: 78px; }
     td.topic-cell { min-width: 240px; }
     td.action-cell { width: 138px; }
@@ -382,8 +427,8 @@
       border: 1px solid transparent;
     }
 
-    .badge.todo { color: #475569; background: #f1f5f9; border-color: #e2e8f0; }
-    .badge.done { color: #15803d; background: #f0fdf4; border-color: #bbf7d0; }
+    .badge.todo { color: var(--muted); background: #f4f6fb; border-color: var(--line); }
+    .badge.done { color: var(--brand-2); background: #e8f5f2; border-color: #b9ddd6; }
     .badge.move { color: var(--warn); background: var(--amber-soft); border-color: #ffd99a; }
     .badge.makeup { color: #1d4ed8; background: var(--blue-soft); border-color: #bfdbfe; }
 
@@ -452,9 +497,9 @@
     }
 
     .tab.active {
-      background: var(--brand-2);
+      background: var(--brand);
       color: #fff;
-      border-color: var(--brand-2);
+      border-color: var(--brand);
     }
 
     .manage-body {
@@ -620,6 +665,11 @@
       border-left: 4px solid #cbd5e1;
     }
 
+    .schedule-item:disabled {
+      opacity: .62;
+      background: #fafbfe;
+    }
+
     .schedule-item.active {
       border-color: var(--brand);
       background: var(--soft);
@@ -628,7 +678,7 @@
 
     .schedule-time {
       font-size: 12px;
-      color: #2563eb;
+      color: var(--brand);
       font-weight: 800;
     }
 
@@ -679,8 +729,8 @@
       margin: 0;
       padding: 10px;
       font-size: 14px;
-      background: #eff6ff;
-      color: #1d4ed8;
+      background: var(--brand-2);
+      color: #fff;
       border-bottom: 1px solid var(--line);
     }
 
@@ -742,15 +792,18 @@
 
     <main>
       <aside class="side">
-        <div class="panel-head">
+        <div class="panel-head filter-head">
           <h2 class="panel-title">ตัวกรอง</h2>
-          <button id="clearFiltersBtn" class="ghost icon" title="ล้างตัวกรอง"><span data-icon="x"></span></button>
+          <div class="filter-actions">
+            <button id="filterToggleBtn" class="ghost" title="เปิด/ปิดตัวกรอง"><span data-icon="settings"></span>เปิดตัวกรอง</button>
+            <button id="clearFiltersBtn" class="ghost icon" title="ล้างตัวกรอง"><span data-icon="x"></span></button>
+          </div>
         </div>
-        <div class="filter-stack">
+        <div id="filterStack" class="filter-stack" hidden>
           <label>ค้นหา
             <div class="searchbox">
               <span data-icon="search"></span>
-              <input id="searchInput" placeholder="หัวข้อ ใบงาน งานที่สั่ง">
+              <input id="searchInput" placeholder="ค้นหาหัวข้อ">
             </div>
           </label>
           <label>รายวิชา
@@ -826,8 +879,8 @@
                 <th>ชั่วโมง</th>
                 <th>วันที่</th>
                 <th>หัวข้อ/เรื่องที่สอน</th>
-                <th>สื่อ/ใบงาน</th>
-                <th>งานเพิ่มเติม</th>
+                <th class="materials-col">สื่อ/ใบงาน</th>
+                <th class="assignment-col">งานเพิ่มเติม</th>
                 <th>สถานะ</th>
                 <th>จัดการ</th>
               </tr>
@@ -1089,10 +1142,20 @@
     }
 
     function normalizeState(data) {
-      return {
+      const normalized = {
         courses: Array.isArray(data.courses) ? data.courses : [],
         lessons: Array.isArray(data.lessons) ? data.lessons : []
       };
+      stripGeneratedExtras(normalized.lessons);
+      return normalized;
+    }
+
+    function stripGeneratedExtras(lessons) {
+      lessons.forEach(lesson => {
+        if (/^ใบความรู้\s/.test(lesson.knowledge_sheet || "")) lesson.knowledge_sheet = "";
+        if (/^ใบงาน\s/.test(lesson.worksheet || "")) lesson.worksheet = "";
+        if (lesson.assignment === "ทบทวนคำศัพท์และเตรียมตัวอย่างจากชีวิตประจำวัน") lesson.assignment = "";
+      });
     }
 
     function saveState() {
@@ -1134,9 +1197,9 @@
             topic,
             objective: sampleObjective(course.subject, course.grade),
             activity: sampleActivity(course.subject),
-            knowledge_sheet: `ใบความรู้ ${course.grade}-${course.semester}/${index + 1}`,
-            worksheet: `ใบงาน ${course.grade}-${course.semester}/${index + 1}`,
-            assignment: index % 4 === 0 ? "ทบทวนคำศัพท์และเตรียมตัวอย่างจากชีวิตประจำวัน" : "",
+            knowledge_sheet: "",
+            worksheet: "",
+            assignment: "",
             status: index < 2 ? "สอนแล้ว" : "ยังไม่สอน",
             note: index < 2 ? "ข้อมูลตัวอย่าง สามารถแก้ไขตามการสอนจริง" : ""
           });
@@ -1855,6 +1918,9 @@
       const body = document.getElementById("lessonRows");
       const lessons = getVisibleLessons();
       const today = new Date().toISOString().slice(0, 10);
+      const showMaterials = lessons.some(lesson => lesson.knowledge_sheet || lesson.worksheet);
+      const showAssignments = lessons.some(lesson => lesson.assignment);
+      toggleOptionalColumns(showMaterials, showAssignments);
       body.innerHTML = "";
       lessons.forEach(lesson => {
         const tr = document.createElement("tr");
@@ -1863,8 +1929,8 @@
           <td class="hour-cell">ชั่วโมง ${lesson.hour_no}</td>
           <td class="nowrap">${lesson.date || "-"}</td>
           <td class="topic-cell"><strong>${escapeHtml(lesson.topic)}</strong><div class="muted">${escapeHtml(lesson.objective || "")}</div></td>
-          <td>${compactMaterials(lesson)}</td>
-          <td>${escapeHtml(lesson.assignment || "-")}</td>
+          ${showMaterials ? `<td class="materials-col">${compactMaterials(lesson)}</td>` : ""}
+          ${showAssignments ? `<td class="assignment-col">${escapeHtml(lesson.assignment || "-")}</td>` : ""}
           <td>${statusBadge(lesson.status)}</td>
           <td class="action-cell"><div class="row-actions">
             <button class="icon quick-done" title="บันทึกว่าสอนวันนี้" data-today="${lesson.id}">${iconMap.check}</button>
@@ -1874,10 +1940,16 @@
         `;
         body.append(tr);
       });
-      if (!lessons.length) body.innerHTML = `<tr><td colspan="7" class="empty">ยังไม่มีชั่วโมงสอนที่ตรงกับตัวกรอง</td></tr>`;
+      const colSpan = 5 + (showMaterials ? 1 : 0) + (showAssignments ? 1 : 0);
+      if (!lessons.length) body.innerHTML = `<tr><td colspan="${colSpan}" class="empty">ยังไม่มีชั่วโมงสอนที่ตรงกับตัวกรอง</td></tr>`;
       body.querySelectorAll("[data-today]").forEach(btn => btn.addEventListener("click", () => teachLessonToday(btn.dataset.today)));
       body.querySelectorAll("[data-edit]").forEach(btn => btn.addEventListener("click", () => openLesson(btn.dataset.edit)));
       body.querySelectorAll("[data-remove]").forEach(btn => btn.addEventListener("click", () => removeLesson(btn.dataset.remove)));
+    }
+
+    function toggleOptionalColumns(showMaterials, showAssignments) {
+      document.querySelectorAll(".materials-col").forEach(el => el.hidden = !showMaterials);
+      document.querySelectorAll(".assignment-col").forEach(el => el.hidden = !showAssignments);
     }
 
     function compactMaterials(lesson) {
@@ -2601,6 +2673,12 @@
 
     document.getElementById("searchInput").addEventListener("input", render);
     ["subjectFilter", "gradeFilter", "semesterFilter", "statusFilter"].forEach(id => document.getElementById(id).addEventListener("change", render));
+    document.getElementById("filterToggleBtn").addEventListener("click", () => {
+      const stack = document.getElementById("filterStack");
+      const isHidden = stack.hidden;
+      stack.hidden = !isHidden;
+      document.getElementById("filterToggleBtn").innerHTML = `${iconMap.settings}${isHidden ? "ซ่อนตัวกรอง" : "เปิดตัวกรอง"}`;
+    });
     document.getElementById("clearFiltersBtn").addEventListener("click", () => {
       document.getElementById("searchInput").value = "";
       document.getElementById("subjectFilter").value = "";
