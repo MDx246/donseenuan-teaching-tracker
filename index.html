@@ -1,0 +1,2674 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ติดตามการสอนรายชั่วโมง | โรงเรียนดอนสีนวน</title>
+  <style>
+    :root {
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --panel: #ffffff;
+      --page: #f8fafc;
+      --brand: #2563eb;
+      --brand-2: #0f766e;
+      --warn: #d97706;
+      --danger: #dc2626;
+      --ok: #16a34a;
+      --soft: #eff6ff;
+      --blue-soft: #eef5ff;
+      --amber-soft: #fffbeb;
+      --rose-soft: #fff1f2;
+      --radius: 8px;
+      --shadow: none;
+      color-scheme: light;
+      font-family: "Noto Sans Thai", "Tahoma", system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, .08), transparent 32rem),
+        var(--page);
+      color: var(--ink);
+      min-width: 320px;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 8px;
+      min-height: 38px;
+      padding: 7px 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      justify-content: center;
+      transition: .15s ease;
+      white-space: nowrap;
+    }
+
+    button:hover { border-color: #93c5fd; background: #f8fbff; transform: translateY(-1px); }
+    button.primary { background: var(--brand); border-color: var(--brand); color: #fff; }
+    button.blue { background: var(--brand-2); border-color: var(--brand-2); color: #fff; }
+    button.danger { background: #fff; border-color: #f0b8b1; color: var(--danger); }
+    button.ghost { background: transparent; }
+    button.icon { width: 38px; padding: 0; }
+    button:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+    .app-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    header {
+      background: rgba(255, 255, 255, .92);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .topbar {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 12px 18px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .brandline {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .school-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: var(--brand);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      flex: 0 0 auto;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      font-size: 18px;
+      margin: 0;
+      line-height: 1.3;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    main {
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .side, .workspace, .editor-panel, .modal-panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .side {
+      position: sticky;
+      top: 82px;
+      max-height: calc(100vh - 102px);
+      overflow: auto;
+      background: rgba(255, 255, 255, .96);
+    }
+
+    .panel-head {
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .panel-title {
+      font-size: 15px;
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .filter-stack {
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 700;
+      display: grid;
+      gap: 6px;
+      color: #344054;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 9px 10px;
+      background: #fff;
+      color: var(--ink);
+      min-height: 38px;
+    }
+
+    textarea {
+      min-height: 86px;
+      resize: vertical;
+    }
+
+    .searchbox {
+      position: relative;
+    }
+
+    .searchbox svg {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+    }
+
+    .searchbox input { padding-left: 36px; }
+
+    .stats {
+      padding: 0 14px 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: linear-gradient(180deg, #ffffff, #f8fbff);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 20px;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .progress {
+      height: 9px;
+      border-radius: 20px;
+      background: #e8edf4;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .progress > i {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--brand), var(--brand-2));
+      width: 0;
+    }
+
+    .subject-list {
+      display: grid;
+      gap: 8px;
+      padding: 0 12px 12px;
+    }
+
+    .course-chip {
+      text-align: left;
+      display: grid;
+      gap: 4px;
+      min-height: 50px;
+      align-items: center;
+    }
+
+    .course-chip.active {
+      border-color: var(--brand);
+      background: var(--soft);
+      color: #1d4ed8;
+    }
+
+    .chip-title {
+      font-weight: 800;
+      white-space: normal;
+      line-height: 1.25;
+    }
+
+    .chip-meta {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .workspace {
+      min-width: 0;
+      overflow: hidden;
+      background: rgba(255, 255, 255, .98);
+    }
+
+    .workspace-head {
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .headline h2 {
+      margin: 0;
+      font-size: 19px;
+      line-height: 1.3;
+    }
+
+    .headline p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .summary-band {
+      padding: 10px 12px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(120px, 1fr));
+      gap: 10px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .mini {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 10px;
+      background: #f8fafc;
+    }
+
+    .mini b { display: block; font-size: 18px; }
+    .mini span { color: var(--muted); font-size: 12px; }
+
+    .table-wrap {
+      overflow: auto;
+      max-height: calc(100vh - 254px);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      min-width: 980px;
+    }
+
+    th, td {
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 13px;
+    }
+
+    th {
+      background: #f1f5f9;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      font-size: 12px;
+      color: #475467;
+    }
+
+    tr:hover td { background: #f8fbff; }
+    td.hour-cell { font-weight: 800; width: 78px; }
+    td.topic-cell { min-width: 240px; }
+    td.action-cell { width: 138px; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      border: 1px solid transparent;
+    }
+
+    .badge.todo { color: #475569; background: #f1f5f9; border-color: #e2e8f0; }
+    .badge.done { color: #15803d; background: #f0fdf4; border-color: #bbf7d0; }
+    .badge.move { color: var(--warn); background: var(--amber-soft); border-color: #ffd99a; }
+    .badge.makeup { color: #1d4ed8; background: var(--blue-soft); border-color: #bfdbfe; }
+
+    .row-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .muted { color: var(--muted); }
+    .nowrap { white-space: nowrap; }
+    .empty {
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(15, 23, 42, .45);
+      z-index: 50;
+    }
+
+    .modal.open { display: flex; }
+
+    .modal-panel {
+      width: min(960px, 100%);
+      max-height: calc(100vh - 36px);
+      overflow: auto;
+      box-shadow: 0 24px 80px rgba(15, 23, 42, .35);
+    }
+
+    .form-grid {
+      padding: 15px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .form-grid .full { grid-column: 1 / -1; }
+
+    .footer-actions {
+      padding: 15px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tabs {
+      padding: 12px 15px 0;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .tab.active {
+      background: var(--brand-2);
+      color: #fff;
+      border-color: var(--brand-2);
+    }
+
+    .manage-body {
+      padding: 15px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .course-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 10px;
+    }
+
+    .course-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+      background: #fff;
+    }
+
+    .course-card strong {
+      line-height: 1.25;
+    }
+
+    .course-actions {
+      display: flex;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+
+    .import-box {
+      border: 1px dashed #aab7ca;
+      border-radius: 8px;
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+      background: #fbfcfe;
+    }
+
+    .help-table {
+      min-width: 760px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .notice {
+      background: #ecfdf3;
+      color: #075334;
+      border: 1px solid #a9e7c4;
+      padding: 10px 12px;
+      border-radius: 8px;
+      display: none;
+      font-size: 13px;
+    }
+
+    .notice.show { display: block; }
+
+    .view-switch {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .view-switch button {
+      border: 0;
+      border-radius: 0;
+      min-height: 36px;
+    }
+
+    .view-switch button.active {
+      background: var(--brand);
+      color: #fff;
+    }
+
+    .today-row {
+      background: #fbfdfc;
+    }
+
+    .quick-done {
+      color: var(--ok);
+      border-color: #bce5ce;
+    }
+
+    .timeline {
+      padding: 12px;
+      display: none;
+      gap: 10px;
+    }
+
+    .timeline.show { display: grid; }
+
+    .timeline-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px 12px;
+      display: grid;
+      grid-template-columns: 96px 1fr auto;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .timeline-date {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .timeline-topic strong {
+      display: block;
+      line-height: 1.35;
+    }
+
+    .report-grid {
+      padding: 15px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(120px, 1fr));
+      gap: 10px;
+    }
+
+    .report-list {
+      padding: 0 15px 15px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .report-line {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 110px 1fr auto;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .table-view.hidden { display: none; }
+
+    .today-schedule {
+      padding: 0 12px 12px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .schedule-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 9px;
+      background: #fff;
+      display: grid;
+      gap: 4px;
+      width: 100%;
+      min-width: 0;
+      text-align: left;
+      white-space: normal;
+      justify-content: stretch;
+      border-left: 4px solid #cbd5e1;
+    }
+
+    .schedule-item.active {
+      border-color: var(--brand);
+      background: var(--soft);
+      border-left-color: var(--brand);
+    }
+
+    .schedule-time {
+      font-size: 12px;
+      color: #2563eb;
+      font-weight: 800;
+    }
+
+    .schedule-main {
+      font-weight: 800;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+      white-space: normal;
+      color: var(--ink);
+    }
+
+    .schedule-note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+      white-space: normal;
+    }
+
+    .date-picker {
+      padding: 0 12px 10px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .date-picker label {
+      font-size: 12px;
+    }
+
+    .week-grid {
+      padding: 12px;
+      display: none;
+      grid-template-columns: repeat(5, minmax(170px, 1fr));
+      gap: 10px;
+    }
+
+    .week-grid.show { display: grid; }
+
+    .day-column {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .day-column h3 {
+      margin: 0;
+      padding: 10px;
+      font-size: 14px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .day-column .schedule-item {
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
+    }
+
+    .day-column .schedule-item:last-child { border-bottom: 0; }
+
+    @media (max-width: 1060px) {
+      main { grid-template-columns: 1fr; }
+      .side { position: static; max-height: none; }
+      .summary-band { grid-template-columns: repeat(2, minmax(120px, 1fr)); }
+      .table-wrap { max-height: none; }
+    }
+
+    @media (max-width: 720px) {
+      .topbar, .workspace-head {
+        grid-template-columns: 1fr;
+      }
+      .top-actions, .toolbar { justify-content: stretch; }
+      .top-actions button, .toolbar button { flex: 1 1 auto; }
+      main { padding: 12px; gap: 12px; }
+      .summary-band, .form-grid, .report-grid { grid-template-columns: 1fr; }
+      .week-grid { grid-template-columns: 1fr; }
+      .timeline-item, .report-line { grid-template-columns: 1fr; }
+      .headline h2 { font-size: 19px; }
+      h1 { font-size: 17px; }
+      .school-mark { width: 40px; height: 40px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header>
+      <div class="topbar">
+        <div class="brandline">
+          <div class="school-mark">523</div>
+          <div>
+            <h1>โรงเรียนดอนสีนวน (สำนักงานสลากกินแบ่งสงเคราะห์ 523)</h1>
+            <div class="subtitle">ระบบติดตามการจัดการเรียนการสอนรายชั่วโมง ป.1-ป.6 และ ม.1-ม.3</div>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button id="manageBtn" class="blue" title="จัดการรายวิชา">
+            <span data-icon="settings"></span>จัดการรายวิชา
+          </button>
+          <button id="reportBtn" title="สรุปรายงาน">
+            <span data-icon="file"></span>รายงาน
+          </button>
+          <button id="exportBtn" title="ส่งออกข้อมูล Excel">
+            <span data-icon="download"></span>ส่งออก Excel
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <aside class="side">
+        <div class="panel-head">
+          <h2 class="panel-title">ตัวกรอง</h2>
+          <button id="clearFiltersBtn" class="ghost icon" title="ล้างตัวกรอง"><span data-icon="x"></span></button>
+        </div>
+        <div class="filter-stack">
+          <label>ค้นหา
+            <div class="searchbox">
+              <span data-icon="search"></span>
+              <input id="searchInput" placeholder="หัวข้อ ใบงาน งานที่สั่ง">
+            </div>
+          </label>
+          <label>รายวิชา
+            <select id="subjectFilter"></select>
+          </label>
+          <label>ชั้น
+            <select id="gradeFilter"></select>
+          </label>
+          <label>ภาคเรียน
+            <select id="semesterFilter"></select>
+          </label>
+          <label>สถานะ
+            <select id="statusFilter">
+              <option value="">ทุกสถานะ</option>
+              <option value="ยังไม่สอน">ยังไม่สอน</option>
+              <option value="สอนแล้ว">สอนแล้ว</option>
+              <option value="เลื่อน">เลื่อน</option>
+              <option value="สอนชดเชย">สอนชดเชย</option>
+            </select>
+          </label>
+        </div>
+        <div class="stats">
+          <div class="stat">
+            <strong id="overallPercent">0%</strong>
+            <span id="overallText">ความคืบหน้ารวม</span>
+            <div class="progress"><i id="overallBar"></i></div>
+          </div>
+        </div>
+        <div class="panel-head">
+          <h2 id="scheduleTitle" class="panel-title">คาบตามวันที่เลือก</h2>
+          <button id="weekViewBtn" class="ghost icon" title="ดูตารางสัปดาห์"><span data-icon="file"></span></button>
+        </div>
+        <div class="date-picker">
+          <label>เลือกวันที่
+            <input id="scheduleDate" type="date">
+          </label>
+        </div>
+        <div id="todaySchedule" class="today-schedule"></div>
+        <div class="panel-head">
+          <h2 class="panel-title">ชุดรายวิชา</h2>
+        </div>
+        <div id="courseList" class="subject-list"></div>
+      </aside>
+
+      <section class="workspace">
+        <div class="workspace-head">
+          <div class="headline">
+            <h2 id="viewTitle">ภาพรวมรายชั่วโมง</h2>
+            <p id="viewSub">เลือกชุดรายวิชาด้านซ้ายเพื่อดูหรือบันทึกความคืบหน้า</p>
+          </div>
+          <div class="toolbar">
+            <div class="view-switch" aria-label="มุมมอง">
+              <button id="tableViewBtn" class="active" type="button">ตาราง</button>
+              <button id="timelineViewBtn" type="button">ไทม์ไลน์</button>
+              <button id="weekTableViewBtn" type="button">ตารางสัปดาห์</button>
+            </div>
+            <button id="teachTodayBtn" class="primary"><span data-icon="check"></span>สอนวันนี้</button>
+            <button id="addHourBtn" class="primary"><span data-icon="plus"></span>เพิ่มชั่วโมง</button>
+          </div>
+        </div>
+
+        <div class="summary-band">
+          <div class="mini"><b id="totalHours">0</b><span>ชั่วโมงทั้งหมด</span></div>
+          <div class="mini"><b id="doneHours">0</b><span>สอนแล้ว/ชดเชย</span></div>
+          <div class="mini"><b id="todoHours">0</b><span>ยังไม่สอน</span></div>
+          <div class="mini"><b id="nextHour">-</b><span>ชั่วโมงถัดไป</span></div>
+        </div>
+
+        <div id="tableView" class="table-wrap table-view">
+          <table>
+            <thead>
+              <tr>
+                <th>ชั่วโมง</th>
+                <th>วันที่</th>
+                <th>หัวข้อ/เรื่องที่สอน</th>
+                <th>สื่อ/ใบงาน</th>
+                <th>งานเพิ่มเติม</th>
+                <th>สถานะ</th>
+                <th>จัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="lessonRows"></tbody>
+          </table>
+        </div>
+        <div id="timelineView" class="timeline"></div>
+        <div id="weekView" class="week-grid"></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="lessonModal" class="modal" aria-hidden="true">
+    <div class="modal-panel editor-panel">
+      <div class="panel-head">
+        <h2 id="lessonModalTitle" class="panel-title">แก้ไขชั่วโมงสอน</h2>
+        <button class="ghost icon" data-close="lessonModal" title="ปิด"><span data-icon="x"></span></button>
+      </div>
+      <form id="lessonForm">
+        <div class="form-grid">
+          <input id="lessonId" type="hidden">
+          <label>รายวิชา
+            <select id="lessonSubject" required></select>
+          </label>
+          <label>ชั้น
+            <select id="lessonGrade" required></select>
+          </label>
+          <label>ภาคเรียน
+            <select id="lessonSemester" required>
+              <option value="1">ภาคเรียนที่ 1</option>
+              <option value="2">ภาคเรียนที่ 2</option>
+            </select>
+          </label>
+          <label>ชั่วโมงที่
+            <input id="lessonHour" type="number" min="1" required>
+          </label>
+          <label>วันที่สอน
+            <input id="lessonDate" type="date">
+          </label>
+          <label>สถานะ
+            <select id="lessonStatus">
+              <option>ยังไม่สอน</option>
+              <option>สอนแล้ว</option>
+              <option>เลื่อน</option>
+              <option>สอนชดเชย</option>
+            </select>
+          </label>
+          <label class="full">หัวข้อ/เรื่องที่สอน
+            <input id="lessonTopic" required>
+          </label>
+          <label class="full">จุดประสงค์การเรียนรู้
+            <textarea id="lessonObjective"></textarea>
+          </label>
+          <label class="full">กิจกรรมการเรียนรู้
+            <textarea id="lessonActivity"></textarea>
+          </label>
+          <label>ใบความรู้/สื่อ
+            <input id="lessonKnowledge" placeholder="ชื่อไฟล์หรือลิงก์">
+          </label>
+          <label>ใบงาน/แบบฝึก
+            <input id="lessonWorksheet" placeholder="ชื่อไฟล์หรือลิงก์">
+          </label>
+          <label class="full">งานที่มอบหมายเพิ่มเติม
+            <textarea id="lessonAssignment"></textarea>
+          </label>
+          <label class="full">หมายเหตุ
+            <textarea id="lessonNote"></textarea>
+          </label>
+        </div>
+        <div class="footer-actions">
+          <button type="button" class="danger" id="deleteLessonBtn"><span data-icon="trash"></span>ลบชั่วโมง</button>
+          <button type="button" data-close="lessonModal">ยกเลิก</button>
+          <button type="submit" class="primary"><span data-icon="save"></span>บันทึก</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="manageModal" class="modal" aria-hidden="true">
+    <div class="modal-panel">
+      <div class="panel-head">
+        <h2 class="panel-title">จัดการรายวิชาและข้อมูลนำเข้า</h2>
+        <button class="ghost icon" data-close="manageModal" title="ปิด"><span data-icon="x"></span></button>
+      </div>
+      <div class="tabs">
+        <button class="tab active" data-tab="coursesTab">รายวิชา</button>
+        <button class="tab" data-tab="importTab">นำเข้า/ส่งออก</button>
+        <button class="tab" data-tab="sampleTab">โครงสร้างไฟล์ตัวอย่าง</button>
+      </div>
+      <div class="manage-body">
+        <div id="manageNotice" class="notice"></div>
+        <section id="coursesTab">
+          <form id="courseForm" class="form-grid">
+            <input id="courseId" type="hidden">
+            <label>รายวิชา
+              <input id="courseSubject" required placeholder="เช่น วิทยาการคำนวณ">
+            </label>
+            <label>ชั้น
+              <select id="courseGrade" required></select>
+            </label>
+            <label>ภาคเรียน
+              <select id="courseSemester" required>
+                <option value="1">ภาคเรียนที่ 1</option>
+                <option value="2">ภาคเรียนที่ 2</option>
+              </select>
+            </label>
+            <label>จำนวนชั่วโมง
+              <input id="courseHours" type="number" min="1" max="80" required>
+            </label>
+            <label class="full">คำอธิบาย
+              <input id="courseDescription" placeholder="บันทึกสั้น ๆ เกี่ยวกับชุดรายวิชานี้">
+            </label>
+            <div class="full footer-actions" style="padding:0;border:0">
+              <button type="button" id="newCourseBtn">ล้างฟอร์ม</button>
+              <button type="submit" class="primary"><span data-icon="save"></span>บันทึกรายวิชา</button>
+            </div>
+          </form>
+          <div id="courseCards" class="course-grid"></div>
+        </section>
+
+        <section id="importTab" hidden>
+          <div class="import-box">
+            <strong>นำเข้าข้อมูลจาก Excel, CSV หรือ JSON</strong>
+            <input id="importFile" type="file" accept=".xlsx,.csv,.json,application/json,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+            <div class="footer-actions" style="padding:0;border:0;justify-content:flex-start">
+              <button id="importBtn" class="primary"><span data-icon="upload"></span>นำเข้า</button>
+              <button id="downloadXlsxBtn"><span data-icon="file"></span>ดาวน์โหลด Excel ตัวอย่าง</button>
+              <button id="downloadCsvBtn"><span data-icon="file"></span>ดาวน์โหลด CSV ตัวอย่าง</button>
+              <button id="downloadJsonBtn"><span data-icon="file"></span>ดาวน์โหลด JSON ตัวอย่าง</button>
+              <button id="exportXlsxBtn"><span data-icon="download"></span>ส่งออก Excel</button>
+              <button id="exportJsonBtn"><span data-icon="download"></span>ส่งออก JSON</button>
+              <button id="resetBtn" class="danger"><span data-icon="refresh"></span>ล้างข้อมูลและโหลดตัวอย่างใหม่</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="sampleTab" hidden>
+          <div class="table-wrap" style="max-height:360px">
+            <table class="help-table">
+              <thead>
+                <tr>
+                  <th>คอลัมน์</th>
+                  <th>ความหมาย</th>
+                  <th>ตัวอย่าง</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>subject</td><td>ชื่อรายวิชา</td><td>วิทยาการคำนวณ</td></tr>
+                <tr><td>grade</td><td>ชั้นเรียน</td><td>ป.1 หรือ ม.1</td></tr>
+                <tr><td>semester</td><td>ภาคเรียน</td><td>1 หรือ 2</td></tr>
+                <tr><td>hour_no</td><td>ชั่วโมงที่</td><td>1</td></tr>
+                <tr><td>topic</td><td>หัวข้อ/เรื่องที่สอน</td><td>การแก้ปัญหาอย่างง่าย</td></tr>
+                <tr><td>objective</td><td>จุดประสงค์</td><td>อธิบายลำดับขั้นตอนอย่างง่ายได้</td></tr>
+                <tr><td>activity</td><td>กิจกรรม</td><td>เรียงบัตรภาพขั้นตอน</td></tr>
+                <tr><td>knowledge_sheet</td><td>ใบความรู้/สื่อ</td><td>ใบความรู้ที่ 1</td></tr>
+                <tr><td>worksheet</td><td>ใบงาน</td><td>ใบงานที่ 1</td></tr>
+                <tr><td>assignment</td><td>งานเพิ่มเติม</td><td>ฝึกเรียงขั้นตอนกิจวัตร</td></tr>
+                <tr><td>status</td><td>สถานะ</td><td>ยังไม่สอน</td></tr>
+                <tr><td>note</td><td>หมายเหตุ</td><td>ปรับตามเวลาเรียนจริง</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div id="reportModal" class="modal" aria-hidden="true">
+    <div class="modal-panel">
+      <div class="panel-head">
+        <h2 class="panel-title">สรุปรายงานการสอน</h2>
+        <button class="ghost icon" data-close="reportModal" title="ปิด"><span data-icon="x"></span></button>
+      </div>
+      <div id="reportSummary" class="report-grid"></div>
+      <div id="reportList" class="report-list"></div>
+      <div class="footer-actions">
+        <button id="printReportBtn"><span data-icon="file"></span>พิมพ์รายงาน</button>
+        <button id="exportReportBtn" class="primary"><span data-icon="download"></span>ส่งออก Excel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "donseenuanTeachingTracker.v2";
+    const grades = ["ป.1", "ป.2", "ป.3", "ป.4", "ป.5", "ป.6", "ม.1", "ม.2", "ม.3"];
+    const statuses = ["ยังไม่สอน", "สอนแล้ว", "เลื่อน", "สอนชดเชย"];
+    const periods = {
+      1: "08.30-09.30",
+      2: "09.30-10.30",
+      3: "10.30-11.30",
+      4: "12.30-13.30",
+      5: "13.30-14.30",
+      6: "14.30-15.30"
+    };
+    const teacherSchedule = {
+      "จันทร์": [
+        { period: 2, subject: "คอมพิวเตอร์", grade: "ม.1" },
+        { period: 3, subject: "การงานอาชีพ", grade: "ป.6" },
+        { period: 5, subject: "วิทย์เทคโน", grade: "ม.1" },
+        { period: 6, subject: "ลดเวลาเรียน", grade: "ป.3" }
+      ],
+      "อังคาร": [
+        { period: 1, subject: "วิทย์เทคโน", grade: "ป.4" },
+        { period: 4, subject: "วิทย์เทคโน", grade: "ป.1" },
+        { period: 5, subject: "วิทย์เทคโน", grade: "ป.6" },
+        { period: 6, subject: "คอมพิวเตอร์เพิ่มเติม", grade: "ม.3" }
+      ],
+      "พุธ": [
+        { period: 1, subject: "วิทย์เทคโน", grade: "ป.3" },
+        { period: 2, subject: "วิทย์เทคโน", grade: "ป.5" },
+        { period: 3, subject: "วิทย์เทคโน", grade: "ป.2" },
+        { period: 5, subject: "คอมพิวเตอร์", grade: "ม.1" },
+        { period: 6, subject: "ชุมนุม", grade: "ทุกชั้น" }
+      ],
+      "พฤหัสบดี": [
+        { period: 1, subject: "การงานอาชีพ", grade: "ป.5" },
+        { period: 2, subject: "คอมพิวเตอร์", grade: "ม.2" },
+        { period: 3, subject: "วิทย์เทคโน", grade: "ม.3" },
+        { period: 4, subject: "วิทย์เทคโน", grade: "ม.2" },
+        { period: 6, subject: "ลูกเสือ", grade: "ทุกชั้น" }
+      ],
+      "ศุกร์": [
+        { period: 1, subject: "คอมพิวเตอร์", grade: "ม.2" },
+        { period: 4, subject: "คอมพิวเตอร์เพิ่มเติม", grade: "ม.3" },
+        { period: 6, subject: "อบรมสุดสัปดาห์", grade: "ทุกชั้น" }
+      ]
+    };
+    const iconMap = {
+      settings: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15.5A3.5 3.5 0 1 0 12 8a3.5 3.5 0 0 0 0 7.5Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1A2 2 0 1 1 4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.3 7A2 2 0 1 1 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.6V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1A2 2 0 1 1 19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.6 1h.1a2 2 0 1 1 0 4H21a1.7 1.7 0 0 0-1.6 1Z"/></svg>',
+      download: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>',
+      upload: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>',
+      refresh: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>',
+      x: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',
+      search: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>',
+      plus: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M5 12h14"/></svg>',
+      check: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>',
+      save: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>',
+      trash: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m19 6-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>',
+      edit: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+      file: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>'
+    };
+
+    let state;
+    let selectedCourseId = "";
+    let currentView = "table";
+    let selectedScheduleDate = new Date().toISOString().slice(0, 10);
+
+    function uid(prefix) {
+      return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+    }
+
+    function loadState() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try { return normalizeState(JSON.parse(saved)); } catch (error) {}
+      }
+      return createSeedData();
+    }
+
+    function normalizeState(data) {
+      return {
+        courses: Array.isArray(data.courses) ? data.courses : [],
+        lessons: Array.isArray(data.lessons) ? data.lessons : []
+      };
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function createSeedData() {
+      const courseSpecs = [
+        ...["ป.1","ป.2","ป.3","ป.4","ป.5","ป.6"].flatMap(grade => [
+          ["วิทยาการคำนวณ", grade, "1", 20],
+          ["วิทยาการคำนวณ", grade, "2", 20]
+        ]),
+        ...["ม.1","ม.2","ม.3"].map(grade => ["วิทยาการคำนวณ", grade, "1", 20]),
+        ...["ม.1","ม.2","ม.3"].map(grade => ["ออกแบบและเทคโนโลยี", grade, "2", 20]),
+        ...["ป.5","ป.6"].flatMap(grade => [
+          ["การงานอาชีพ", grade, "1", 20],
+          ["การงานอาชีพ", grade, "2", 20]
+        ])
+      ];
+      const courses = courseSpecs.map(([subject, grade, semester, hours]) => ({
+        id: uid("course"),
+        subject,
+        grade,
+        semester,
+        hours,
+        description: `${subject} ${grade} ภาคเรียนที่ ${semester}`
+      }));
+      const lessons = [];
+      courses.forEach(course => {
+        getTopicBank(course).forEach((topic, index) => {
+          lessons.push({
+            id: uid("lesson"),
+            courseId: course.id,
+            subject: course.subject,
+            grade: course.grade,
+            semester: course.semester,
+            hour_no: index + 1,
+            date: "",
+            topic,
+            objective: sampleObjective(course.subject, course.grade),
+            activity: sampleActivity(course.subject),
+            knowledge_sheet: `ใบความรู้ ${course.grade}-${course.semester}/${index + 1}`,
+            worksheet: `ใบงาน ${course.grade}-${course.semester}/${index + 1}`,
+            assignment: index % 4 === 0 ? "ทบทวนคำศัพท์และเตรียมตัวอย่างจากชีวิตประจำวัน" : "",
+            status: index < 2 ? "สอนแล้ว" : "ยังไม่สอน",
+            note: index < 2 ? "ข้อมูลตัวอย่าง สามารถแก้ไขตามการสอนจริง" : ""
+          });
+        });
+      });
+      return { courses, lessons };
+    }
+
+    function getTopicBank(course) {
+      const topics = curriculumTopics[course.subject]?.[course.grade]?.[course.semester]
+        || curriculumTopics[course.subject]?.[course.grade]?.default
+        || ["หัวข้อการเรียนรู้"];
+      return Array.from({ length: course.hours }, (_, i) => topics[i] || `${topics[i % topics.length]} (${i + 1})`);
+    }
+
+    const curriculumTopics = {
+      "วิทยาการคำนวณ": {
+        "ป.1": {
+          "1": [
+            "รู้จักปัญหาใกล้ตัวและบอกเป้าหมายของการแก้ปัญหา",
+            "แยกส่วนประกอบของปัญหาอย่างง่าย",
+            "เรียงลำดับกิจวัตรประจำวันเป็นขั้นตอน",
+            "ใช้ภาพและข้อความแทนขั้นตอนการทำงาน",
+            "ตรวจสอบลำดับขั้นตอนว่าถูกต้องหรือไม่",
+            "แก้ปัญหาด้วยการลองผิดลองถูกอย่างมีเหตุผล",
+            "เปรียบเทียบวิธีแก้ปัญหาหลายวิธี",
+            "ใช้คำสั่งเดินหน้า เลี้ยวซ้าย เลี้ยวขวา",
+            "เขียนคำสั่งด้วยบัตรภาพหรือสัญลักษณ์",
+            "กิจกรรมอัลกอริทึมแบบไม่ใช้คอมพิวเตอร์",
+            "รู้จักอุปกรณ์เทคโนโลยีรอบตัว",
+            "ส่วนประกอบพื้นฐานของคอมพิวเตอร์",
+            "การเปิด ปิด และดูแลอุปกรณ์อย่างถูกวิธี",
+            "ใช้เมาส์ แป้นพิมพ์ หรือจอสัมผัสเบื้องต้น",
+            "สร้างชิ้นงานง่าย ๆ ด้วยโปรแกรมวาดภาพ",
+            "จัดเก็บและเปิดชิ้นงานของตนเอง",
+            "ข้อตกลงการใช้คอมพิวเตอร์ในห้องเรียน",
+            "ข้อมูลส่วนตัวที่ไม่ควรบอกผู้อื่น",
+            "มารยาทในการใช้เทคโนโลยีร่วมกับผู้อื่น",
+            "สรุปการแก้ปัญหาเป็นขั้นตอนและนำเสนอผลงาน"
+          ],
+          "2": [
+            "ทบทวนลำดับขั้นตอนจากกิจกรรมในชีวิตประจำวัน",
+            "เลือกข้อมูลที่จำเป็นต่อการแก้ปัญหา",
+            "เรียงภาพเหตุการณ์ก่อน หลัง",
+            "ใช้ลูกศรแทนทิศทางและคำสั่ง",
+            "สร้างเส้นทางจากจุดเริ่มต้นถึงเป้าหมาย",
+            "แก้ไขคำสั่งเมื่อผลลัพธ์ไม่ตรงเป้าหมาย",
+            "ฝึกคิดแบบเป็นขั้นตอนผ่านเกมบนกระดาษ",
+            "ออกแบบคำสั่งให้เพื่อนปฏิบัติตาม",
+            "ตรวจหาข้อผิดพลาดของคำสั่ง",
+            "ปรับปรุงขั้นตอนให้สั้นและเข้าใจง่าย",
+            "รู้จักข้อมูลจากภาพ เสียง และข้อความ",
+            "เลือกใช้โปรแกรมหรือแอปพลิเคชันให้เหมาะกับงาน",
+            "พิมพ์คำและประโยคสั้น ๆ",
+            "วาดภาพประกอบเรื่องราวด้วยเครื่องมือดิจิทัล",
+            "บันทึกชื่อไฟล์ให้สื่อความหมาย",
+            "ใช้เทคโนโลยีตามเวลาที่เหมาะสม",
+            "ขอความช่วยเหลือเมื่อพบเนื้อหาไม่เหมาะสม",
+            "เคารพผลงานและอุปกรณ์ของผู้อื่น",
+            "สร้างชิ้นงานเล่าเรื่องขั้นตอน",
+            "สะท้อนผลการเรียนรู้และสิ่งที่ควรระวัง"
+          ]
+        },
+        "ป.2": {
+          "1": [
+            "ระบุปัญหาและเงื่อนไขจากสถานการณ์ใกล้ตัว",
+            "วางแผนแก้ปัญหาด้วยภาพหรือข้อความ",
+            "อัลกอริทึมในกิจวัตรประจำวัน",
+            "คำสั่งตามลำดับและผลลัพธ์ที่คาดหวัง",
+            "ใช้สัญลักษณ์แทนการเคลื่อนที่",
+            "สร้างชุดคำสั่งบนตารางช่อง",
+            "ตรวจสอบคำสั่งทีละขั้น",
+            "แก้ไขข้อผิดพลาดของอัลกอริทึม",
+            "เปรียบเทียบวิธีที่ทำให้ถึงเป้าหมาย",
+            "กิจกรรมสั่งงานเพื่อนให้ทำตามขั้นตอน",
+            "รู้จักโปรแกรมเขียนคำสั่งอย่างง่าย",
+            "คำสั่งเริ่มต้นและคำสั่งสิ้นสุด",
+            "สร้างลำดับคำสั่งให้ตัวละครเคลื่อนที่",
+            "ทดลองผลลัพธ์และปรับปรุงคำสั่ง",
+            "บันทึกชิ้นงานโปรแกรมอย่างง่าย",
+            "ข้อมูลส่วนตัวและข้อมูลของครอบครัว",
+            "การใช้รหัสผ่านอย่างเหมาะสมกับวัย",
+            "มารยาทในการใช้สื่อดิจิทัล",
+            "การใช้เทคโนโลยีอย่างประหยัดและปลอดภัย",
+            "สรุปผลงานอัลกอริทึมและแลกเปลี่ยนความคิดเห็น"
+          ],
+          "2": [
+            "ทบทวนการเขียนขั้นตอนด้วยภาพและข้อความ",
+            "แยกงานใหญ่เป็นงานย่อย",
+            "ใช้คำสั่งซ้ำจากรูปแบบที่พบ",
+            "ออกแบบเส้นทางหลบสิ่งกีดขวาง",
+            "เขียนคำสั่งให้ได้ผลลัพธ์ตรงเงื่อนไข",
+            "ตรวจหาจุดผิดในชุดคำสั่ง",
+            "ใช้เหตุผลอธิบายการเลือกวิธีแก้ปัญหา",
+            "สร้างเกมคำสั่งแบบไม่ใช้คอมพิวเตอร์",
+            "เริ่มเขียนโปรแกรมด้วยบล็อกคำสั่ง",
+            "คำสั่งเคลื่อนที่และคำสั่งแสดงผล",
+            "ลำดับคำสั่งและการทดสอบโปรแกรม",
+            "ปรับปรุงโปรแกรมให้ทำงานครบตามโจทย์",
+            "รู้จักข้อมูลจากแหล่งต่าง ๆ",
+            "จัดกลุ่มข้อมูลอย่างง่าย",
+            "นำเสนอข้อมูลด้วยภาพหรือข้อความ",
+            "ใช้ซอฟต์แวร์สร้างชิ้นงานประกอบการเรียน",
+            "ข้อตกลงการใช้สื่อและแหล่งข้อมูล",
+            "การขออนุญาตก่อนใช้รูปภาพหรือผลงานผู้อื่น",
+            "สร้างชิ้นงานโปรแกรมเล่าเรื่อง",
+            "ประเมินผลงานและบอกแนวทางปรับปรุง"
+          ]
+        },
+        "ป.3": {
+          "1": [
+            "วิเคราะห์ปัญหาและข้อมูลที่โจทย์กำหนด",
+            "เขียนอัลกอริทึมด้วยข้อความ",
+            "เขียนอัลกอริทึมด้วยภาพและสัญลักษณ์",
+            "เรียงลำดับคำสั่งที่มีเงื่อนไขง่าย ๆ",
+            "ใช้เหตุผลตรวจสอบความถูกต้องของขั้นตอน",
+            "แก้ไขขั้นตอนเมื่อพบข้อผิดพลาด",
+            "ออกแบบกิจกรรมบนตารางหรือแผนที่",
+            "รู้จักการทำงานซ้ำในชีวิตประจำวัน",
+            "เขียนคำสั่งซ้ำอย่างง่าย",
+            "นำเสนอแนวคิดการแก้ปัญหาให้เพื่อนเข้าใจ",
+            "รู้จักอินเทอร์เน็ตและแหล่งข้อมูลออนไลน์",
+            "ใช้คำค้นหาอย่างเหมาะสม",
+            "เลือกข้อมูลที่เกี่ยวข้องกับงาน",
+            "บันทึกแหล่งที่มาของข้อมูลอย่างง่าย",
+            "ความน่าเชื่อถือเบื้องต้นของข้อมูล",
+            "ข้อมูลส่วนตัวบนอินเทอร์เน็ต",
+            "ผลกระทบจากการเผยแพร่ข้อมูลไม่เหมาะสม",
+            "ข้อตกลงการใช้เครื่องมือและบัญชีผู้ใช้",
+            "มารยาทในการสื่อสารออนไลน์",
+            "สรุปการค้นคว้าและนำเสนอข้อมูล"
+          ],
+          "2": [
+            "ทบทวนอัลกอริทึมและการตรวจหาข้อผิดพลาด",
+            "เริ่มต้นโปรแกรมด้วยบล็อกคำสั่ง",
+            "คำสั่งเคลื่อนที่ เสียง และรูปลักษณ์",
+            "เหตุการณ์เริ่มทำงานของโปรแกรม",
+            "ลำดับคำสั่งและผลลัพธ์บนหน้าจอ",
+            "คำสั่งซ้ำเพื่อสร้างรูปแบบ",
+            "ทดสอบและแก้ไขโปรแกรม",
+            "สร้างโปรแกรมเกมหรือเรื่องเล่าสั้น ๆ",
+            "เก็บรวบรวมข้อมูลจากการสำรวจ",
+            "จัดหมวดหมู่ข้อมูล",
+            "นับจำนวนและเปรียบเทียบข้อมูล",
+            "นำเสนอข้อมูลด้วยตารางอย่างง่าย",
+            "นำเสนอข้อมูลด้วยแผนภูมิรูปภาพ",
+            "ใช้ซอฟต์แวร์จัดทำรายงานสั้น ๆ",
+            "จัดเก็บไฟล์และโฟลเดอร์ให้เป็นระบบ",
+            "ใช้สื่อดิจิทัลตามลิขสิทธิ์และข้อตกลง",
+            "ดูแลอุปกรณ์และไฟล์งานของตนเอง",
+            "สร้างชิ้นงานจากข้อมูลที่รวบรวม",
+            "นำเสนอโปรแกรมหรือข้อมูลต่อชั้นเรียน",
+            "สะท้อนผลการใช้เทคโนโลยีอย่างปลอดภัย"
+          ]
+        },
+        "ป.4": {
+          "1": [
+            "ใช้เหตุผลเชิงตรรกะในการแก้ปัญหา",
+            "แยกย่อยปัญหาเป็นขั้นตอน",
+            "สร้างอัลกอริทึมด้วยข้อความและผังงาน",
+            "สัญลักษณ์พื้นฐานของผังงาน",
+            "ตรวจสอบเงื่อนไขจากสถานการณ์",
+            "ออกแบบขั้นตอนที่มีทางเลือก",
+            "ทดสอบอัลกอริทึมด้วยข้อมูลตัวอย่าง",
+            "ปรับปรุงขั้นตอนให้ถูกต้องและกระชับ",
+            "เริ่มต้นเขียนโปรแกรมแบบบล็อก",
+            "เหตุการณ์และลำดับคำสั่งในโปรแกรม",
+            "คำสั่งเคลื่อนที่และการแสดงผล",
+            "คำสั่งวนซ้ำพื้นฐาน",
+            "การใช้ตัวแปรอย่างง่าย",
+            "ตรวจหาข้อผิดพลาดของโปรแกรม",
+            "สร้างโปรแกรมโต้ตอบอย่างง่าย",
+            "บันทึกและจัดการไฟล์โปรแกรม",
+            "แลกเปลี่ยนผลงานและรับข้อเสนอแนะ",
+            "ปรับปรุงโปรแกรมตามข้อเสนอแนะ",
+            "เขียนคำอธิบายการทำงานของโปรแกรม",
+            "สรุปแนวคิดเชิงตรรกะจากผลงาน"
+          ],
+          "2": [
+            "ค้นหาข้อมูลจากอินเทอร์เน็ตด้วยคำสำคัญ",
+            "กำหนดคำค้นหาให้ตรงประเด็น",
+            "ประเมินความน่าเชื่อถือของเว็บไซต์เบื้องต้น",
+            "รวบรวมข้อมูลจากแหล่งที่เหมาะสม",
+            "บันทึกแหล่งที่มาของข้อมูล",
+            "จัดระเบียบข้อมูลในตาราง",
+            "ใช้ซอฟต์แวร์คำนวณหรือจัดตารางเบื้องต้น",
+            "สร้างแผนภูมิจากข้อมูล",
+            "แปลความหมายข้อมูลจากตารางและแผนภูมิ",
+            "นำเสนอข้อมูลด้วยข้อความและภาพ",
+            "ข้อมูลส่วนตัวและร่องรอยดิจิทัล",
+            "การตั้งรหัสผ่านและการดูแลบัญชี",
+            "มารยาทและความรับผิดชอบในการสื่อสารออนไลน์",
+            "ลิขสิทธิ์และการอ้างอิงแหล่งข้อมูล",
+            "รับมือข้อมูลหรือข้อความที่ไม่เหมาะสม",
+            "สร้างรายงานจากข้อมูลที่ค้นคว้า",
+            "ตรวจสอบความถูกต้องของรายงาน",
+            "นำเสนอข้อมูลต่อเพื่อนร่วมชั้น",
+            "ประเมินการใช้ข้อมูลอย่างปลอดภัย",
+            "สรุปแฟ้มสะสมงานดิจิทัล"
+          ]
+        },
+        "ป.5": {
+          "1": [
+            "ใช้เหตุผลเชิงตรรกะอธิบายการแก้ปัญหา",
+            "วิเคราะห์โจทย์และกำหนดเงื่อนไข",
+            "แยกย่อยปัญหาและลำดับงาน",
+            "เขียนอัลกอริทึมด้วยรหัสลำลอง",
+            "เขียนผังงานที่มีเงื่อนไข",
+            "ทดสอบอัลกอริทึมด้วยกรณีตัวอย่าง",
+            "เปรียบเทียบประสิทธิภาพของวิธีแก้ปัญหา",
+            "เริ่มต้นโปรแกรมแบบบล็อกหรือข้อความ",
+            "ตัวแปรและการกำหนดค่า",
+            "ตัวดำเนินการและนิพจน์อย่างง่าย",
+            "คำสั่งเงื่อนไข ถ้า แล้ว",
+            "คำสั่งวนซ้ำ",
+            "รับข้อมูลเข้าและแสดงผลลัพธ์",
+            "ตรวจหาข้อผิดพลาดและแก้ไขโปรแกรม",
+            "ออกแบบโปรแกรมแก้ปัญหาใกล้ตัว",
+            "สร้างโปรแกรมคำนวณหรือเกมอย่างง่าย",
+            "ทดสอบโปรแกรมตามเงื่อนไข",
+            "ปรับปรุงส่วนติดต่อและคำอธิบาย",
+            "นำเสนอการทำงานของโปรแกรม",
+            "สรุปแนวคิดอัลกอริทึมและการเขียนโปรแกรม"
+          ],
+          "2": [
+            "กำหนดปัญหาและคำถามสำหรับค้นหาข้อมูล",
+            "วางแผนการค้นหาและรวบรวมข้อมูล",
+            "ใช้คำค้นหาและตัวกรองผลการค้นหา",
+            "ประเมินความน่าเชื่อถือของข้อมูลออนไลน์",
+            "เปรียบเทียบข้อมูลจากหลายแหล่ง",
+            "อ้างอิงแหล่งที่มาและเคารพลิขสิทธิ์",
+            "เก็บรวบรวมข้อมูลด้วยแบบสำรวจ",
+            "จัดระเบียบข้อมูลในตาราง",
+            "ใช้สูตรคำนวณพื้นฐาน",
+            "ตรวจสอบความถูกต้องของข้อมูล",
+            "สร้างแผนภูมิที่เหมาะกับข้อมูล",
+            "แปลผลและสรุปข้อค้นพบ",
+            "นำเสนอข้อมูลด้วยสไลด์หรือรายงาน",
+            "ข้อมูลส่วนตัวและการจัดการอัตลักษณ์",
+            "รหัสผ่านที่ปลอดภัยและการออกจากระบบ",
+            "ภัยจากการหลอกลวงออนไลน์",
+            "มารยาทและผลกระทบของการเผยแพร่ข้อมูล",
+            "ข้อตกลงการใช้สื่อและ Creative Commons",
+            "จัดทำโครงงานข้อมูลขนาดเล็ก",
+            "สะท้อนผลการใช้ข้อมูลและเทคโนโลยีอย่างรับผิดชอบ"
+          ]
+        },
+        "ป.6": {
+          "1": [
+            "วิเคราะห์ปัญหาโดยใช้แนวคิดเชิงคำนวณ",
+            "แยกย่อยปัญหาและหาส่วนที่ซ้ำกัน",
+            "หารูปแบบจากข้อมูลหรือสถานการณ์",
+            "ออกแบบอัลกอริทึมด้วยรหัสลำลอง",
+            "ออกแบบอัลกอริทึมด้วยผังงาน",
+            "ตรวจสอบอัลกอริทึมด้วยชุดข้อมูลทดสอบ",
+            "ปรับปรุงอัลกอริทึมให้มีประสิทธิภาพ",
+            "เขียนโปรแกรมที่ใช้เหตุการณ์",
+            "ใช้ตัวแปรเก็บข้อมูล",
+            "ใช้เงื่อนไขซ้อนหรือหลายเงื่อนไข",
+            "ใช้การวนซ้ำเพื่อประมวลผลงาน",
+            "สร้างฟังก์ชันหรือบล็อกคำสั่งของตนเอง",
+            "รับข้อมูลและตรวจสอบข้อมูลเข้า",
+            "แสดงผลลัพธ์ด้วยข้อความ ภาพ หรือเสียง",
+            "ดีบักโปรแกรมอย่างเป็นระบบ",
+            "สร้างโปรแกรมแก้ปัญหาหรือจำลองสถานการณ์",
+            "ทดสอบโปรแกรมกับผู้ใช้",
+            "ปรับปรุงโปรแกรมจากผลทดสอบ",
+            "เขียนคู่มือหรือคำอธิบายการใช้งาน",
+            "นำเสนอโครงงานโปรแกรม"
+          ],
+          "2": [
+            "กำหนดประเด็นค้นคว้าจากปัญหาใกล้ตัว",
+            "วางแผนรวบรวมข้อมูลและกำหนดแหล่งข้อมูล",
+            "ค้นหาข้อมูลออนไลน์อย่างมีประสิทธิภาพ",
+            "ประเมินความน่าเชื่อถือและความทันสมัยของข้อมูล",
+            "แยกข้อเท็จจริงและความคิดเห็น",
+            "จัดเก็บข้อมูลในตารางคำนวณ",
+            "ใช้สูตรและฟังก์ชันพื้นฐาน",
+            "คัดกรองและเรียงลำดับข้อมูล",
+            "สร้างแผนภูมิเปรียบเทียบข้อมูล",
+            "แปลผลข้อมูลและสรุปข้อเสนอแนะ",
+            "สร้างสื่อนำเสนอจากข้อมูล",
+            "ใช้ไฟล์ร่วมกันและจัดการสิทธิ์อย่างเหมาะสม",
+            "ความปลอดภัยของบัญชีและข้อมูลส่วนตัว",
+            "ภัยคุกคามออนไลน์และวิธีป้องกัน",
+            "การสื่อสารออนไลน์อย่างสร้างสรรค์",
+            "ลิขสิทธิ์ การอ้างอิง และการใช้สื่อถูกต้อง",
+            "ผลกระทบของเทคโนโลยีต่อสังคม",
+            "จัดทำโครงงานสารสนเทศ",
+            "นำเสนอโครงงานและรับข้อเสนอแนะ",
+            "ประเมินตนเองด้านการใช้เทคโนโลยีอย่างปลอดภัย"
+          ]
+        },
+        "ม.1": {
+          "1": [
+            "แนวคิดเชิงคำนวณกับการแก้ปัญหา",
+            "การแยกย่อยปัญหา",
+            "การหารูปแบบและสิ่งที่เหมือนกัน",
+            "การคิดเชิงนามธรรม",
+            "การออกแบบอัลกอริทึม",
+            "รหัสลำลองและผังงาน",
+            "การตรวจสอบอัลกอริทึมด้วยข้อมูลทดสอบ",
+            "เริ่มต้นเขียนโปรแกรม",
+            "ตัวแปร ชนิดข้อมูล และการรับค่า",
+            "ตัวดำเนินการและนิพจน์",
+            "คำสั่งเงื่อนไข",
+            "คำสั่งวนซ้ำ",
+            "การแบ่งปัญหาเป็นโปรแกรมย่อย",
+            "การดีบักและทดสอบโปรแกรม",
+            "ออกแบบโปรแกรมแก้ปัญหาในชีวิตประจำวัน",
+            "ข้อมูลและการแทนข้อมูล",
+            "รวบรวมและจัดเตรียมข้อมูล",
+            "ประมวลผลข้อมูลด้วยเครื่องมือดิจิทัล",
+            "ใช้เทคโนโลยีสารสนเทศอย่างปลอดภัยและมีจริยธรรม",
+            "นำเสนอโครงงานวิทยาการคำนวณ"
+          ]
+        },
+        "ม.2": {
+          "1": [
+            "ทบทวนแนวคิดเชิงคำนวณและอัลกอริทึม",
+            "วิเคราะห์ปัญหาที่มีเงื่อนไขหลายส่วน",
+            "ออกแบบอัลกอริทึมให้มีประสิทธิภาพ",
+            "ผังงานและรหัสลำลองสำหรับปัญหาซับซ้อน",
+            "ภาษาโปรแกรมและสภาพแวดล้อมการพัฒนา",
+            "ตัวแปร ชนิดข้อมูล และนิพจน์ตรรกะ",
+            "คำสั่งเงื่อนไขหลายทางเลือก",
+            "คำสั่งวนซ้ำแบบกำหนดจำนวนและตามเงื่อนไข",
+            "รายการข้อมูลหรือโครงสร้างข้อมูลอย่างง่าย",
+            "ฟังก์ชันและการแบ่งโปรแกรมเป็นส่วนย่อย",
+            "ออกแบบและเขียนโปรแกรมที่ใช้ตรรกะ",
+            "ทดสอบและดีบักด้วยกรณีทดสอบ",
+            "องค์ประกอบของระบบคอมพิวเตอร์",
+            "หลักการทำงานของฮาร์ดแวร์และซอฟต์แวร์",
+            "เครือข่ายคอมพิวเตอร์และอินเทอร์เน็ต",
+            "เทคโนโลยีการสื่อสารและการประยุกต์ใช้",
+            "การแก้ปัญหาคอมพิวเตอร์เบื้องต้น",
+            "ความปลอดภัยของข้อมูลและบัญชีผู้ใช้",
+            "กฎหมาย จริยธรรม และข้อตกลงการใช้เทคโนโลยี",
+            "สรุปโครงงานโปรแกรมหรือระบบสารสนเทศ"
+          ]
+        },
+        "ม.3": {
+          "1": [
+            "ระบุปัญหาและโอกาสในการพัฒนาแอปพลิเคชัน",
+            "วิเคราะห์ผู้ใช้และความต้องการของระบบ",
+            "ออกแบบแนวคิดแอปพลิเคชัน",
+            "ออกแบบข้อมูลนำเข้า ประมวลผล และผลลัพธ์",
+            "ออกแบบหน้าจอและประสบการณ์ผู้ใช้",
+            "สร้างต้นแบบแอปพลิเคชัน",
+            "เขียนโปรแกรมหรือสร้างแอปด้วยเครื่องมือที่เหมาะสม",
+            "ใช้ตัวแปร เงื่อนไข และการวนซ้ำในแอป",
+            "จัดเก็บและเรียกใช้ข้อมูลอย่างง่าย",
+            "ทดสอบแอปพลิเคชันกับผู้ใช้",
+            "ปรับปรุงแอปจากผลการทดสอบ",
+            "รวบรวมข้อมูลเพื่อแก้ปัญหาหรือสนับสนุนการตัดสินใจ",
+            "ประมวลผลและวิเคราะห์ข้อมูล",
+            "นำเสนอข้อมูลด้วยภาพ ตาราง หรือแดชบอร์ด",
+            "ประเมินความน่าเชื่อถือของข้อมูลและข่าวสาร",
+            "ตรวจสอบแหล่งที่มา ผู้เขียน และวันที่เผยแพร่",
+            "แยกข้อเท็จจริง ความเห็น และการโน้มน้าว",
+            "ใช้เทคโนโลยีอย่างปลอดภัย ถูกกฎหมาย และมีจริยธรรม",
+            "เผยแพร่ผลงานดิจิทัลอย่างรับผิดชอบ",
+            "นำเสนอโครงงานแอปพลิเคชันหรือข้อมูล"
+          ]
+        }
+      },
+      "ออกแบบและเทคโนโลยี": {
+        "ม.1": {
+          "2": [
+            "เทคโนโลยีในชีวิตประจำวันและการเปลี่ยนแปลง",
+            "ระบบทางเทคโนโลยีและองค์ประกอบของระบบ",
+            "ผลกระทบของเทคโนโลยีต่อมนุษย์ สังคม และสิ่งแวดล้อม",
+            "ระบุปัญหาหรือความต้องการในโรงเรียน",
+            "กำหนดขอบเขตของปัญหา",
+            "รวบรวมข้อมูลและแนวทางที่เกี่ยวข้อง",
+            "วิเคราะห์ข้อมูลเพื่อหาเงื่อนไขและข้อจำกัด",
+            "กระบวนการออกแบบเชิงวิศวกรรม",
+            "สร้างแนวคิดแก้ปัญหาหลายทางเลือก",
+            "เลือกแนวทางแก้ปัญหาด้วยเหตุผล",
+            "เขียนภาพร่างและอธิบายแนวคิด",
+            "รู้จักวัสดุและสมบัติพื้นฐาน",
+            "เลือกเครื่องมือและอุปกรณ์อย่างปลอดภัย",
+            "วางแผนขั้นตอนการสร้างชิ้นงาน",
+            "สร้างต้นแบบตามแบบร่าง",
+            "ทดสอบต้นแบบตามเกณฑ์ที่กำหนด",
+            "ปรับปรุงชิ้นงานจากผลการทดสอบ",
+            "จัดทำข้อมูลประกอบผลงาน",
+            "นำเสนอชิ้นงานและกระบวนการออกแบบ",
+            "ประเมินผลและสะท้อนการทำงานเป็นทีม"
+          ]
+        },
+        "ม.2": {
+          "2": [
+            "ทบทวนระบบทางเทคโนโลยี",
+            "เทคโนโลยีกับการแก้ปัญหาในชุมชน",
+            "วิเคราะห์สาเหตุและผลกระทบของปัญหา",
+            "กำหนดผู้ใช้และความต้องการจำเป็น",
+            "รวบรวมข้อมูลจากการสำรวจหรือสัมภาษณ์",
+            "วิเคราะห์เงื่อนไข ทรัพยากร และข้อจำกัด",
+            "ออกแบบเกณฑ์ความสำเร็จของชิ้นงาน",
+            "สร้างแนวคิดด้วยการระดมสมอง",
+            "เลือกแนวทางด้วยตารางเปรียบเทียบ",
+            "เขียนแบบร่างพร้อมขนาดและรายละเอียด",
+            "วัสดุในงานออกแบบและสมบัติที่เกี่ยวข้อง",
+            "กลไก ไฟฟ้า หรืออิเล็กทรอนิกส์เบื้องต้น",
+            "เลือกใช้เครื่องมืออย่างถูกต้องและปลอดภัย",
+            "วางแผนงาน เวลา และบทบาทสมาชิก",
+            "สร้างต้นแบบหรือแบบจำลอง",
+            "ทดสอบตามเกณฑ์และบันทึกผล",
+            "วิเคราะห์ข้อบกพร่องของต้นแบบ",
+            "ปรับปรุงและพัฒนาชิ้นงาน",
+            "นำเสนอผลการแก้ปัญหาพร้อมหลักฐาน",
+            "ประเมินผลกระทบและความคุ้มค่าของชิ้นงาน"
+          ]
+        },
+        "ม.3": {
+          "2": [
+            "เทคโนโลยีกับนวัตกรรมและอาชีพในอนาคต",
+            "วิเคราะห์ปัญหาที่ซับซ้อนในโรงเรียนหรือชุมชน",
+            "กำหนดขอบเขตปัญหา ผู้มีส่วนเกี่ยวข้อง และเป้าหมาย",
+            "ค้นคว้าความรู้วิทยาศาสตร์ คณิตศาสตร์ และศาสตร์อื่นที่เกี่ยวข้อง",
+            "วิเคราะห์ข้อมูลเพื่อสร้างข้อกำหนดของงาน",
+            "ประเมินข้อจำกัดด้านวัสดุ เวลา งบประมาณ และความปลอดภัย",
+            "ออกแบบแนวทางแก้ปัญหาแบบบูรณาการ",
+            "เลือกแนวทางโดยใช้เหตุผลและหลักฐาน",
+            "เขียนแบบร่าง แผนภาพ หรือแบบจำลองสามมิติ",
+            "เลือกวัสดุ อุปกรณ์ กลไก หรือวงจรที่เหมาะสม",
+            "วางแผนโครงงานและบริหารงานเป็นทีม",
+            "สร้างต้นแบบตามแผนงาน",
+            "ใช้เครื่องมือและอุปกรณ์อย่างปลอดภัย",
+            "ทดสอบต้นแบบด้วยเกณฑ์เชิงปริมาณและเชิงคุณภาพ",
+            "เก็บข้อมูลผลการทดสอบ",
+            "วิเคราะห์ผลและตัดสินใจปรับปรุง",
+            "พัฒนาชิ้นงานรอบที่สอง",
+            "ประเมินผลกระทบต่อผู้ใช้ สังคม และสิ่งแวดล้อม",
+            "จัดทำรายงานโครงงานออกแบบและเทคโนโลยี",
+            "นำเสนอผลงานและข้อเสนอพัฒนาต่อ"
+          ]
+        }
+      },
+      "การงานอาชีพ": {
+        "ป.5": {
+          "1": [
+            "ความหมายและคุณค่าของการทำงานอย่างเป็นระบบ",
+            "วางแผนงานส่วนตัวและงานกลุ่ม",
+            "บทบาท หน้าที่ และความรับผิดชอบในการทำงาน",
+            "ความปลอดภัยและสุขนิสัยในการทำงาน",
+            "การดูแลรักษาเสื้อผ้าและเครื่องแต่งกาย",
+            "การซ่อมแซมเสื้อผ้าเบื้องต้น",
+            "การจัดเก็บของใช้ส่วนตัวและของใช้ในบ้าน",
+            "การเลือกใช้อุปกรณ์ทำความสะอาด",
+            "การทำความสะอาดห้องเรียนและพื้นที่ส่วนรวม",
+            "การประหยัดทรัพยากรในการทำงานบ้าน",
+            "อาหารและโภชนาการสำหรับวัยเรียน",
+            "การเลือกวัตถุดิบและอุปกรณ์ประกอบอาหารง่าย ๆ",
+            "ความปลอดภัยในการใช้เครื่องครัว",
+            "ฝึกเตรียมหรือประกอบอาหารว่าง",
+            "การจัดเสิร์ฟและเก็บล้างหลังปฏิบัติงาน",
+            "บันทึกขั้นตอนและประเมินผลงานอาหาร",
+            "การทำงานร่วมกันอย่างมีมารยาท",
+            "แก้ปัญหาระหว่างปฏิบัติงาน",
+            "สรุปทักษะงานบ้านและการดูแลตนเอง",
+            "นำเสนอผลงานและสะท้อนความรับผิดชอบ"
+          ],
+          "2": [
+            "งานเกษตรในครอบครัวและโรงเรียน",
+            "เครื่องมือเกษตรและการใช้งานอย่างปลอดภัย",
+            "การเลือกเมล็ดพันธุ์หรือพืชที่เหมาะสม",
+            "การเตรียมดินและภาชนะปลูก",
+            "การเพาะเมล็ดและย้ายกล้า",
+            "การรดน้ำ ใส่ปุ๋ย และดูแลพืช",
+            "การป้องกันศัตรูพืชอย่างปลอดภัย",
+            "บันทึกการเจริญเติบโตของพืช",
+            "เก็บเกี่ยวและใช้ประโยชน์จากผลผลิต",
+            "ประเมินผลการปลูกพืช",
+            "งานประดิษฐ์จากวัสดุในท้องถิ่น",
+            "ออกแบบชิ้นงานประดิษฐ์อย่างง่าย",
+            "เลือกวัสดุและเครื่องมือสำหรับงานประดิษฐ์",
+            "สร้างชิ้นงานตามขั้นตอน",
+            "ตกแต่งและตรวจคุณภาพชิ้นงาน",
+            "คำนวณต้นทุนเบื้องต้นของชิ้นงาน",
+            "รู้จักอาชีพในชุมชน",
+            "คุณธรรมและเจตคติที่ดีต่อการประกอบอาชีพ",
+            "จัดนิทรรศการผลงานการงานอาชีพ",
+            "สรุปทักษะงานเกษตร งานประดิษฐ์ และอาชีพ"
+          ]
+        },
+        "ป.6": {
+          "1": [
+            "การทำงานเพื่อช่วยเหลือตนเอง ครอบครัว และส่วนรวม",
+            "วิเคราะห์งานและกำหนดเป้าหมาย",
+            "วางแผนขั้นตอน เวลา วัสดุ และผู้รับผิดชอบ",
+            "หลักความปลอดภัยในการทำงานที่ซับซ้อนขึ้น",
+            "การดูแลรักษาบ้านและสิ่งแวดล้อมในบ้าน",
+            "การจัดพื้นที่เรียนรู้หรือมุมทำงาน",
+            "การบำรุงรักษาเครื่องใช้และอุปกรณ์พื้นฐาน",
+            "การเลือกซื้อของใช้อย่างคุ้มค่า",
+            "การจัดทำบัญชีรายรับรายจ่ายอย่างง่าย",
+            "การประหยัด ออม และใช้ทรัพยากรอย่างพอเพียง",
+            "วางแผนเมนูอาหารสำหรับครอบครัว",
+            "เลือกวัตถุดิบตามคุณค่าอาหารและความปลอดภัย",
+            "การประกอบอาหารอย่างถูกสุขลักษณะ",
+            "ฝึกทำอาหารหรือเครื่องดื่มง่าย ๆ",
+            "การจัดโต๊ะอาหารและมารยาทในการรับประทาน",
+            "ประเมินคุณภาพอาหารและกระบวนการทำงาน",
+            "การทำงานกลุ่มและภาวะผู้นำ",
+            "แก้ปัญหาและปรับปรุงงานจากข้อเสนอแนะ",
+            "จัดทำรายงานผลงานงานบ้านและอาหาร",
+            "นำเสนอผลงานและสะท้อนการใช้ชีวิตอย่างพอเพียง"
+          ],
+          "2": [
+            "สำรวจงานเกษตรและอาชีพที่เกี่ยวข้องในท้องถิ่น",
+            "วางแผนโครงงานปลูกพืชหรือดูแลพืช",
+            "เลือกพืชตามฤดูกาล พื้นที่ และทรัพยากร",
+            "เตรียมวัสดุ อุปกรณ์ และพื้นที่ปลูก",
+            "ปลูกหรือขยายพันธุ์พืชตามขั้นตอน",
+            "ดูแลพืชและจัดการปัญหาระหว่างปลูก",
+            "บันทึกข้อมูลต้นทุน เวลา และผลผลิต",
+            "เก็บเกี่ยว แปรรูป หรือใช้ประโยชน์จากผลผลิต",
+            "ประเมินผลโครงงานเกษตร",
+            "นำเสนอผลการปลูกพืชและข้อเสนอปรับปรุง",
+            "ออกแบบผลิตภัณฑ์จากวัสดุเหลือใช้หรือวัสดุท้องถิ่น",
+            "เลือกเทคนิคงานประดิษฐ์ให้เหมาะกับวัสดุ",
+            "สร้างชิ้นงานโดยคำนึงถึงความแข็งแรงและความสวยงาม",
+            "ตรวจคุณภาพ ปรับปรุง และตกแต่งชิ้นงาน",
+            "บรรจุภัณฑ์และการนำเสนอผลิตภัณฑ์",
+            "คำนวณต้นทุน ราคาขาย และกำไรเบื้องต้น",
+            "สำรวจอาชีพที่สนใจและคุณสมบัติที่จำเป็น",
+            "คุณธรรมในการประกอบอาชีพและการทำงานบริการ",
+            "ตลาดนัดผลงานหรือการนำเสนออาชีพ",
+            "สรุปเส้นทางการเรียนรู้สู่อาชีพในอนาคต"
+          ]
+        }
+      }
+    };
+
+    state = loadState();
+    selectedCourseId = state.courses[0]?.id || "";
+
+    function sampleObjective(subject, grade) {
+      if (subject === "ออกแบบและเทคโนโลยี") return "นักเรียนวิเคราะห์ปัญหา ออกแบบแนวทางแก้ไข และอธิบายเหตุผลของชิ้นงานได้";
+      if (subject === "การงานอาชีพ") return "นักเรียนปฏิบัติงานตามขั้นตอน ใช้อุปกรณ์อย่างปลอดภัย และรับผิดชอบงานที่ได้รับมอบหมายได้";
+      return grade.startsWith("ม.") ? "นักเรียนอธิบายแนวคิดเชิงคำนวณและประยุกต์ใช้แก้ปัญหาได้" : "นักเรียนเรียงลำดับขั้นตอนและใช้เทคโนโลยีอย่างเหมาะสมได้";
+    }
+
+    function sampleActivity(subject) {
+      if (subject === "ออกแบบและเทคโนโลยี") return "สำรวจปัญหา ทำแบบร่าง แลกเปลี่ยนความคิดเห็น และปรับปรุงต้นแบบ";
+      if (subject === "การงานอาชีพ") return "ครูสาธิต นักเรียนฝึกปฏิบัติเป็นกลุ่ม ตรวจผลงาน และสะท้อนผล";
+      return "ครูยกตัวอย่าง นักเรียนฝึกคิดเป็นขั้นตอน ทำใบงาน และอภิปรายคำตอบร่วมกัน";
+    }
+
+    function renderIcons() {
+      document.querySelectorAll("[data-icon]").forEach(el => {
+        el.innerHTML = iconMap[el.dataset.icon] || "";
+      });
+    }
+
+    function fillSelect(select, values, allText) {
+      const current = select.value;
+      select.innerHTML = allText ? `<option value="">${allText}</option>` : "";
+      values.forEach(value => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        select.append(option);
+      });
+      if ([...select.options].some(option => option.value === current)) select.value = current;
+    }
+
+    function populateFilters() {
+      fillSelect(document.getElementById("subjectFilter"), [...new Set(state.courses.map(c => c.subject))], "ทุกรายวิชา");
+      fillSelect(document.getElementById("gradeFilter"), grades, "ทุกชั้น");
+      fillSelect(document.getElementById("semesterFilter"), ["1", "2"], "ทุกภาคเรียน");
+      fillSelect(document.getElementById("lessonSubject"), [...new Set(state.courses.map(c => c.subject))], "");
+      fillSelect(document.getElementById("lessonGrade"), grades, "");
+      fillSelect(document.getElementById("courseGrade"), grades, "");
+      document.getElementById("scheduleDate").value = selectedScheduleDate;
+    }
+
+    function getFilteredCourses() {
+      const subject = document.getElementById("subjectFilter").value;
+      const grade = document.getElementById("gradeFilter").value;
+      const semester = document.getElementById("semesterFilter").value;
+      return state.courses.filter(course =>
+        (!subject || course.subject === subject) &&
+        (!grade || course.grade === grade) &&
+        (!semester || course.semester === semester)
+      );
+    }
+
+    function getVisibleLessons() {
+      const query = document.getElementById("searchInput").value.trim().toLowerCase();
+      const status = document.getElementById("statusFilter").value;
+      const courses = getFilteredCourses();
+      const courseIds = new Set(courses.map(c => c.id));
+      return state.lessons
+        .filter(lesson => (!selectedCourseId || lesson.courseId === selectedCourseId) && courseIds.has(lesson.courseId))
+        .filter(lesson => !status || lesson.status === status)
+        .filter(lesson => {
+          if (!query) return true;
+          return [lesson.topic, lesson.objective, lesson.activity, lesson.knowledge_sheet, lesson.worksheet, lesson.assignment, lesson.note]
+            .some(value => String(value || "").toLowerCase().includes(query));
+        })
+        .sort((a, b) => Number(a.hour_no) - Number(b.hour_no));
+    }
+
+    function renderCourseList() {
+      const container = document.getElementById("courseList");
+      const courses = getFilteredCourses();
+      if (!courses.some(c => c.id === selectedCourseId)) selectedCourseId = courses[0]?.id || "";
+      container.innerHTML = "";
+      courses.forEach(course => {
+        const lessons = state.lessons.filter(l => l.courseId === course.id);
+        const done = lessons.filter(isDone).length;
+        const button = document.createElement("button");
+        button.className = `course-chip ${course.id === selectedCourseId ? "active" : ""}`;
+        button.innerHTML = `<span class="chip-title">${escapeHtml(course.subject)} ${escapeHtml(course.grade)}</span><span class="chip-meta">ภาคเรียนที่ ${course.semester} • ${done}/${lessons.length || course.hours} ชั่วโมง</span>`;
+        button.addEventListener("click", () => {
+          selectedCourseId = course.id;
+          render();
+        });
+        container.append(button);
+      });
+      if (!courses.length) container.innerHTML = `<div class="empty">ไม่พบรายวิชาตามตัวกรอง</div>`;
+    }
+
+    function renderSummary() {
+      const lessons = getVisibleLessons();
+      const done = lessons.filter(isDone).length;
+      const todo = lessons.filter(l => l.status === "ยังไม่สอน").length;
+      const next = lessons.find(l => !isDone(l));
+      const percent = lessons.length ? Math.round(done / lessons.length * 100) : 0;
+      document.getElementById("overallPercent").textContent = `${percent}%`;
+      document.getElementById("overallText").textContent = `${done}/${lessons.length} ชั่วโมง`;
+      document.getElementById("overallBar").style.width = `${percent}%`;
+      document.getElementById("totalHours").textContent = lessons.length;
+      document.getElementById("doneHours").textContent = done;
+      document.getElementById("todoHours").textContent = todo;
+      document.getElementById("nextHour").textContent = next ? `ชั่วโมง ${next.hour_no}` : "-";
+      const course = state.courses.find(c => c.id === selectedCourseId);
+      document.getElementById("viewTitle").textContent = course ? `${course.subject} ${course.grade} ภาคเรียนที่ ${course.semester}` : "ภาพรวมรายชั่วโมง";
+      document.getElementById("viewSub").textContent = course ? course.description || "ติดตามหัวข้อ ใบงาน ใบความรู้ และงานที่มอบหมาย" : "เลือกชุดรายวิชาด้านซ้ายเพื่อดูหรือบันทึกความคืบหน้า";
+    }
+
+    function renderTodaySchedule() {
+      const container = document.getElementById("todaySchedule");
+      const selectedDate = parseDateInput(selectedScheduleDate);
+      const day = thaiWeekday(selectedDate);
+      const items = teacherSchedule[day] || [];
+      document.getElementById("scheduleTitle").textContent = `คาบ${day} ${formatThaiDate(selectedDate)}`;
+      container.innerHTML = items.map(item => scheduleItemHtml(item, true)).join("") || `<div class="empty">วันที่เลือกไม่มีคาบสอนในตาราง</div>`;
+      container.querySelectorAll("[data-course]").forEach(button => button.addEventListener("click", () => {
+        selectedCourseId = button.dataset.course;
+        currentView = "table";
+        render();
+      }));
+    }
+
+    function renderWeekSchedule() {
+      const container = document.getElementById("weekView");
+      container.innerHTML = Object.entries(teacherSchedule).map(([day, items]) => `
+        <section class="day-column">
+          <h3>${day}</h3>
+          ${items.map(item => scheduleItemHtml(item, false)).join("")}
+        </section>
+      `).join("");
+      container.querySelectorAll("[data-course]").forEach(button => button.addEventListener("click", () => {
+        selectedCourseId = button.dataset.course;
+        currentView = "table";
+        render();
+      }));
+    }
+
+    function scheduleItemHtml(item, compact) {
+      const match = findScheduleCourse(item);
+      const next = match ? state.lessons
+        .filter(lesson => lesson.courseId === match.id)
+        .sort((a, b) => Number(a.hour_no) - Number(b.hour_no))
+        .find(lesson => !isDone(lesson)) : null;
+      const disabled = match ? "" : "disabled";
+      return `
+        <button class="schedule-item ${match?.id === selectedCourseId ? "active" : ""}" ${disabled} data-course="${match?.id || ""}" title="${match ? "เปิดรายวิชานี้" : "กิจกรรมนี้ยังไม่ผูกกับรายวิชา"}">
+          <span class="schedule-time">คาบ ${item.period} • ${periods[item.period] || ""}</span>
+          <span class="schedule-main">${escapeHtml(item.subject)} ${escapeHtml(item.grade)}</span>
+          <span class="schedule-note">${next ? `ถัดไป: ชั่วโมง ${next.hour_no} ${escapeHtml(next.topic)}` : match ? "สอนครบหรือยังไม่พบหัวข้อถัดไป" : "กิจกรรม/ไม่ใช่รายวิชาหลัก"}</span>
+        </button>
+      `;
+    }
+
+    function findScheduleCourse(item) {
+      const subject = scheduleSubjectToCourse(item.subject);
+      if (!subject) return null;
+      return state.courses.find(course => course.subject === subject && course.grade === item.grade && course.semester === "1") || null;
+    }
+
+    function scheduleSubjectToCourse(subject) {
+      if (subject.includes("การงาน")) return "การงานอาชีพ";
+      if (subject.includes("วิทย์เทคโน") || subject.includes("คอมพิวเตอร์")) return "วิทยาการคำนวณ";
+      return "";
+    }
+
+    function thaiWeekday(date) {
+      return ["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"][date.getDay()];
+    }
+
+    function parseDateInput(value) {
+      const [year, month, day] = String(value || "").split("-").map(Number);
+      return year && month && day ? new Date(year, month - 1, day) : new Date();
+    }
+
+    function formatThaiDate(date) {
+      return date.toLocaleDateString("th-TH", { day: "numeric", month: "short", year: "2-digit" });
+    }
+
+    function renderLessons() {
+      const body = document.getElementById("lessonRows");
+      const lessons = getVisibleLessons();
+      const today = new Date().toISOString().slice(0, 10);
+      body.innerHTML = "";
+      lessons.forEach(lesson => {
+        const tr = document.createElement("tr");
+        if (lesson.date === today) tr.className = "today-row";
+        tr.innerHTML = `
+          <td class="hour-cell">ชั่วโมง ${lesson.hour_no}</td>
+          <td class="nowrap">${lesson.date || "-"}</td>
+          <td class="topic-cell"><strong>${escapeHtml(lesson.topic)}</strong><div class="muted">${escapeHtml(lesson.objective || "")}</div></td>
+          <td>${compactMaterials(lesson)}</td>
+          <td>${escapeHtml(lesson.assignment || "-")}</td>
+          <td>${statusBadge(lesson.status)}</td>
+          <td class="action-cell"><div class="row-actions">
+            <button class="icon quick-done" title="บันทึกว่าสอนวันนี้" data-today="${lesson.id}">${iconMap.check}</button>
+            <button class="icon" title="แก้ไข" data-edit="${lesson.id}">${iconMap.edit}</button>
+            <button class="icon danger" title="ลบ" data-remove="${lesson.id}">${iconMap.trash}</button>
+          </div></td>
+        `;
+        body.append(tr);
+      });
+      if (!lessons.length) body.innerHTML = `<tr><td colspan="7" class="empty">ยังไม่มีชั่วโมงสอนที่ตรงกับตัวกรอง</td></tr>`;
+      body.querySelectorAll("[data-today]").forEach(btn => btn.addEventListener("click", () => teachLessonToday(btn.dataset.today)));
+      body.querySelectorAll("[data-edit]").forEach(btn => btn.addEventListener("click", () => openLesson(btn.dataset.edit)));
+      body.querySelectorAll("[data-remove]").forEach(btn => btn.addEventListener("click", () => removeLesson(btn.dataset.remove)));
+    }
+
+    function compactMaterials(lesson) {
+      const items = [];
+      if (lesson.knowledge_sheet) items.push(`<div><span class="muted">สื่อ:</span> ${linkify(lesson.knowledge_sheet)}</div>`);
+      if (lesson.worksheet) items.push(`<div><span class="muted">ใบงาน:</span> ${linkify(lesson.worksheet)}</div>`);
+      return items.join("") || "-";
+    }
+
+    function renderTimeline() {
+      const container = document.getElementById("timelineView");
+      const lessons = getVisibleLessons();
+      container.innerHTML = "";
+      lessons.forEach(lesson => {
+        const item = document.createElement("div");
+        item.className = "timeline-item";
+        item.innerHTML = `
+          <div class="timeline-date">ชั่วโมง ${lesson.hour_no}<br>${escapeHtml(lesson.date || "ยังไม่ลงวันที่")}</div>
+          <div class="timeline-topic">
+            <strong>${escapeHtml(lesson.topic)}</strong>
+            <span class="muted">${escapeHtml(lesson.assignment || lesson.worksheet || lesson.knowledge_sheet || "")}</span>
+          </div>
+          <div>${statusBadge(lesson.status)}</div>
+        `;
+        container.append(item);
+      });
+      if (!lessons.length) container.innerHTML = `<div class="empty">ยังไม่มีข้อมูลสำหรับมุมมองไทม์ไลน์</div>`;
+    }
+
+    function renderCourseCards() {
+      const container = document.getElementById("courseCards");
+      container.innerHTML = "";
+      state.courses.forEach(course => {
+        const lessons = state.lessons.filter(l => l.courseId === course.id);
+        const done = lessons.filter(isDone).length;
+        const div = document.createElement("div");
+        div.className = "course-card";
+        div.innerHTML = `
+          <strong>${escapeHtml(course.subject)} ${escapeHtml(course.grade)} ภาคเรียนที่ ${course.semester}</strong>
+          <span class="muted">${done}/${lessons.length || course.hours} ชั่วโมง • ${escapeHtml(course.description || "")}</span>
+          <div class="course-actions">
+            <button class="icon" title="แก้ไขรายวิชา" data-course-edit="${course.id}">${iconMap.edit}</button>
+            <button class="icon danger" title="ลบรายวิชา" data-course-remove="${course.id}">${iconMap.trash}</button>
+          </div>
+        `;
+        container.append(div);
+      });
+      container.querySelectorAll("[data-course-edit]").forEach(btn => btn.addEventListener("click", () => editCourse(btn.dataset.courseEdit)));
+      container.querySelectorAll("[data-course-remove]").forEach(btn => btn.addEventListener("click", () => removeCourse(btn.dataset.courseRemove)));
+    }
+
+    function render() {
+      populateFilters();
+      renderCourseList();
+      renderSummary();
+      renderTodaySchedule();
+      renderLessons();
+      renderTimeline();
+      renderWeekSchedule();
+      renderCourseCards();
+      applyViewMode();
+      saveState();
+      renderIcons();
+    }
+
+    function isDone(lesson) {
+      return lesson.status === "สอนแล้ว" || lesson.status === "สอนชดเชย";
+    }
+
+    function statusBadge(status) {
+      const cls = status === "สอนแล้ว" ? "done" : status === "เลื่อน" ? "move" : status === "สอนชดเชย" ? "makeup" : "todo";
+      return `<span class="badge ${cls}">${escapeHtml(status || "ยังไม่สอน")}</span>`;
+    }
+
+    function linkify(value) {
+      if (!value) return "-";
+      const text = escapeHtml(value);
+      if (/^https?:\/\//i.test(value)) return `<a href="${text}" target="_blank" rel="noreferrer">${text}</a>`;
+      return text;
+    }
+
+    function applyViewMode() {
+      const table = document.getElementById("tableView");
+      const timeline = document.getElementById("timelineView");
+      const week = document.getElementById("weekView");
+      document.getElementById("tableViewBtn").classList.toggle("active", currentView === "table");
+      document.getElementById("timelineViewBtn").classList.toggle("active", currentView === "timeline");
+      document.getElementById("weekTableViewBtn").classList.toggle("active", currentView === "week");
+      table.classList.toggle("hidden", currentView !== "table");
+      timeline.classList.toggle("show", currentView === "timeline");
+      week.classList.toggle("show", currentView === "week");
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.add("open");
+      document.getElementById(id).setAttribute("aria-hidden", "false");
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("open");
+      document.getElementById(id).setAttribute("aria-hidden", "true");
+    }
+
+    function openLesson(id) {
+      const lesson = id ? state.lessons.find(item => item.id === id) : null;
+      const course = state.courses.find(item => item.id === selectedCourseId) || state.courses[0];
+      document.getElementById("lessonModalTitle").textContent = lesson ? "แก้ไขชั่วโมงสอน" : "เพิ่มชั่วโมงสอน";
+      document.getElementById("lessonId").value = lesson?.id || "";
+      document.getElementById("lessonSubject").value = lesson?.subject || course?.subject || "";
+      document.getElementById("lessonGrade").value = lesson?.grade || course?.grade || "ป.1";
+      document.getElementById("lessonSemester").value = lesson?.semester || course?.semester || "1";
+      document.getElementById("lessonHour").value = lesson?.hour_no || nextHourNo(course?.id);
+      document.getElementById("lessonDate").value = lesson?.date || "";
+      document.getElementById("lessonStatus").value = lesson?.status || "ยังไม่สอน";
+      document.getElementById("lessonTopic").value = lesson?.topic || "";
+      document.getElementById("lessonObjective").value = lesson?.objective || "";
+      document.getElementById("lessonActivity").value = lesson?.activity || "";
+      document.getElementById("lessonKnowledge").value = lesson?.knowledge_sheet || "";
+      document.getElementById("lessonWorksheet").value = lesson?.worksheet || "";
+      document.getElementById("lessonAssignment").value = lesson?.assignment || "";
+      document.getElementById("lessonNote").value = lesson?.note || "";
+      document.getElementById("deleteLessonBtn").style.display = lesson ? "inline-flex" : "none";
+      openModal("lessonModal");
+    }
+
+    function nextHourNo(courseId) {
+      const hours = state.lessons.filter(l => l.courseId === courseId).map(l => Number(l.hour_no));
+      return (Math.max(0, ...hours) + 1);
+    }
+
+    function saveLesson(event) {
+      event.preventDefault();
+      const id = document.getElementById("lessonId").value || uid("lesson");
+      const subject = document.getElementById("lessonSubject").value;
+      const grade = document.getElementById("lessonGrade").value;
+      const semester = document.getElementById("lessonSemester").value;
+      let course = state.courses.find(c => c.subject === subject && c.grade === grade && c.semester === semester);
+      if (!course) {
+        course = { id: uid("course"), subject, grade, semester, hours: 20, description: `${subject} ${grade} ภาคเรียนที่ ${semester}` };
+        state.courses.push(course);
+      }
+      const payload = {
+        id,
+        courseId: course.id,
+        subject,
+        grade,
+        semester,
+        hour_no: Number(document.getElementById("lessonHour").value),
+        date: document.getElementById("lessonDate").value,
+        topic: document.getElementById("lessonTopic").value.trim(),
+        objective: document.getElementById("lessonObjective").value.trim(),
+        activity: document.getElementById("lessonActivity").value.trim(),
+        knowledge_sheet: document.getElementById("lessonKnowledge").value.trim(),
+        worksheet: document.getElementById("lessonWorksheet").value.trim(),
+        assignment: document.getElementById("lessonAssignment").value.trim(),
+        status: document.getElementById("lessonStatus").value,
+        note: document.getElementById("lessonNote").value.trim()
+      };
+      const index = state.lessons.findIndex(item => item.id === id);
+      if (index >= 0) state.lessons[index] = payload;
+      else state.lessons.push(payload);
+      selectedCourseId = course.id;
+      closeModal("lessonModal");
+      render();
+    }
+
+    function removeLesson(id) {
+      if (!confirm("ลบชั่วโมงสอนนี้ใช่ไหม")) return;
+      state.lessons = state.lessons.filter(lesson => lesson.id !== id);
+      closeModal("lessonModal");
+      render();
+    }
+
+    function markNextDone() {
+      const lesson = getVisibleLessons().find(item => !isDone(item));
+      if (!lesson) return;
+      teachLessonToday(lesson.id);
+    }
+
+    function teachLessonToday(id) {
+      const lesson = state.lessons.find(item => item.id === id) || getVisibleLessons().find(item => !isDone(item));
+      if (!lesson) return;
+      lesson.status = "สอนแล้ว";
+      lesson.date = new Date().toISOString().slice(0, 10);
+      render();
+    }
+
+    function saveCourse(event) {
+      event.preventDefault();
+      const id = document.getElementById("courseId").value || uid("course");
+      const course = {
+        id,
+        subject: document.getElementById("courseSubject").value.trim(),
+        grade: document.getElementById("courseGrade").value,
+        semester: document.getElementById("courseSemester").value,
+        hours: Number(document.getElementById("courseHours").value),
+        description: document.getElementById("courseDescription").value.trim()
+      };
+      const index = state.courses.findIndex(item => item.id === id);
+      if (index >= 0) {
+        const old = state.courses[index];
+        state.courses[index] = course;
+        state.lessons.forEach(lesson => {
+          if (lesson.courseId === id) {
+            lesson.subject = course.subject;
+            lesson.grade = course.grade;
+            lesson.semester = course.semester;
+          }
+        });
+      } else {
+        state.courses.push(course);
+        for (let i = 1; i <= course.hours; i++) {
+          state.lessons.push({
+            id: uid("lesson"),
+            courseId: course.id,
+            subject: course.subject,
+            grade: course.grade,
+            semester: course.semester,
+            hour_no: i,
+            date: "",
+            topic: `หัวข้อชั่วโมงที่ ${i}`,
+            objective: "",
+            activity: "",
+            knowledge_sheet: "",
+            worksheet: "",
+            assignment: "",
+            status: "ยังไม่สอน",
+            note: ""
+          });
+        }
+      }
+      selectedCourseId = course.id;
+      resetCourseForm();
+      showNotice("บันทึกรายวิชาแล้ว");
+      render();
+    }
+
+    function editCourse(id) {
+      const course = state.courses.find(item => item.id === id);
+      if (!course) return;
+      document.getElementById("courseId").value = course.id;
+      document.getElementById("courseSubject").value = course.subject;
+      document.getElementById("courseGrade").value = course.grade;
+      document.getElementById("courseSemester").value = course.semester;
+      document.getElementById("courseHours").value = course.hours;
+      document.getElementById("courseDescription").value = course.description || "";
+    }
+
+    function resetCourseForm() {
+      document.getElementById("courseId").value = "";
+      document.getElementById("courseSubject").value = "";
+      document.getElementById("courseGrade").value = "ป.1";
+      document.getElementById("courseSemester").value = "1";
+      document.getElementById("courseHours").value = "20";
+      document.getElementById("courseDescription").value = "";
+    }
+
+    function removeCourse(id) {
+      const course = state.courses.find(item => item.id === id);
+      if (!course || !confirm(`ลบ ${course.subject} ${course.grade} ภาคเรียนที่ ${course.semester} และชั่วโมงทั้งหมดใช่ไหม`)) return;
+      state.courses = state.courses.filter(item => item.id !== id);
+      state.lessons = state.lessons.filter(item => item.courseId !== id);
+      selectedCourseId = state.courses[0]?.id || "";
+      render();
+    }
+
+    function exportCsv(rows = state.lessons) {
+      const header = ["subject","grade","semester","hour_no","date","topic","objective","activity","knowledge_sheet","worksheet","assignment","status","note"];
+      const csv = [header.join(",")]
+        .concat(rows.map(row => header.map(key => csvCell(row[key])).join(",")))
+        .join("\n");
+      downloadText(`donseenuan-lessons-${todayText()}.csv`, csv, "text/csv;charset=utf-8");
+    }
+
+    function csvCell(value) {
+      const text = String(value ?? "");
+      return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+    }
+
+    function exportJson(data = state, filename = `donseenuan-teaching-data-${todayText()}.json`) {
+      downloadText(filename, JSON.stringify(data, null, 2), "application/json");
+    }
+
+    function exportXlsx(rows = state.lessons, filename = `donseenuan-lessons-${todayText()}.xlsx`) {
+      const header = ["subject","grade","semester","hour_no","date","topic","objective","activity","knowledge_sheet","worksheet","assignment","status","note"];
+      const dataRows = rows.map(row => header.map(key => row[key] ?? ""));
+      const files = makeXlsxFiles([header, ...dataRows]);
+      downloadBytes(filename, zipStore(files), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    }
+
+    function makeXlsxFiles(rows) {
+      const sheetData = rows.map((row, rIndex) => {
+        const cells = row.map((value, cIndex) => {
+          const ref = `${columnName(cIndex + 1)}${rIndex + 1}`;
+          return `<c r="${ref}" t="inlineStr"><is><t>${xmlEscape(value)}</t></is></c>`;
+        }).join("");
+        return `<row r="${rIndex + 1}">${cells}</row>`;
+      }).join("");
+      return {
+        "[Content_Types].xml": `<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>`,
+        "_rels/.rels": `<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`,
+        "xl/workbook.xml": `<?xml version="1.0" encoding="UTF-8"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="lessons" sheetId="1" r:id="rId1"/></sheets></workbook>`,
+        "xl/_rels/workbook.xml.rels": `<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>`,
+        "xl/worksheets/sheet1.xml": `<?xml version="1.0" encoding="UTF-8"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>${sheetData}</sheetData></worksheet>`
+      };
+    }
+
+    function columnName(number) {
+      let name = "";
+      while (number > 0) {
+        const mod = (number - 1) % 26;
+        name = String.fromCharCode(65 + mod) + name;
+        number = Math.floor((number - mod) / 26);
+      }
+      return name;
+    }
+
+    function xmlEscape(value) {
+      return String(value ?? "").replace(/[<>&'"]/g, char => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '"': "&quot;" }[char]));
+    }
+
+    function zipStore(files) {
+      const encoder = new TextEncoder();
+      const chunks = [];
+      const central = [];
+      let offset = 0;
+      Object.entries(files).forEach(([name, content]) => {
+        const nameBytes = encoder.encode(name);
+        const data = encoder.encode(content);
+        const crc = crc32(data);
+        const local = new Uint8Array(30 + nameBytes.length + data.length);
+        const view = new DataView(local.buffer);
+        view.setUint32(0, 0x04034b50, true);
+        view.setUint16(4, 20, true);
+        view.setUint16(8, 0, true);
+        view.setUint32(14, crc, true);
+        view.setUint32(18, data.length, true);
+        view.setUint32(22, data.length, true);
+        view.setUint16(26, nameBytes.length, true);
+        local.set(nameBytes, 30);
+        local.set(data, 30 + nameBytes.length);
+        chunks.push(local);
+
+        const dir = new Uint8Array(46 + nameBytes.length);
+        const dirView = new DataView(dir.buffer);
+        dirView.setUint32(0, 0x02014b50, true);
+        dirView.setUint16(4, 20, true);
+        dirView.setUint16(6, 20, true);
+        dirView.setUint32(16, crc, true);
+        dirView.setUint32(20, data.length, true);
+        dirView.setUint32(24, data.length, true);
+        dirView.setUint16(28, nameBytes.length, true);
+        dirView.setUint32(42, offset, true);
+        dir.set(nameBytes, 46);
+        central.push(dir);
+        offset += local.length;
+      });
+      const centralSize = central.reduce((sum, item) => sum + item.length, 0);
+      const end = new Uint8Array(22);
+      const endView = new DataView(end.buffer);
+      endView.setUint32(0, 0x06054b50, true);
+      endView.setUint16(8, central.length, true);
+      endView.setUint16(10, central.length, true);
+      endView.setUint32(12, centralSize, true);
+      endView.setUint32(16, offset, true);
+      return concatBytes([...chunks, ...central, end]);
+    }
+
+    function concatBytes(parts) {
+      const total = parts.reduce((sum, part) => sum + part.length, 0);
+      const output = new Uint8Array(total);
+      let offset = 0;
+      parts.forEach(part => {
+        output.set(part, offset);
+        offset += part.length;
+      });
+      return output;
+    }
+
+    function crc32(bytes) {
+      let table = crc32.table;
+      if (!table) {
+        table = crc32.table = Array.from({ length: 256 }, (_, n) => {
+          let c = n;
+          for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+          return c >>> 0;
+        });
+      }
+      let crc = -1;
+      for (const byte of bytes) crc = (crc >>> 8) ^ table[(crc ^ byte) & 0xff];
+      return (crc ^ -1) >>> 0;
+    }
+
+    function downloadText(filename, text, type) {
+      const blob = new Blob(["\ufeff", text], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadBytes(filename, bytes, type) {
+      const blob = new Blob([bytes], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function todayText() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function sampleRows() {
+      return [
+        {
+          subject: "วิทยาการคำนวณ",
+          grade: "ป.1",
+          semester: "1",
+          hour_no: 1,
+          date: "",
+          topic: "รู้จักลำดับขั้นตอน",
+          objective: "นักเรียนเรียงลำดับขั้นตอนกิจวัตรประจำวันได้",
+          activity: "เรียงบัตรภาพและอธิบายเหตุผล",
+          knowledge_sheet: "ใบความรู้ที่ 1 ลำดับขั้นตอน",
+          worksheet: "ใบงานที่ 1 เรียงภาพ",
+          assignment: "สังเกตขั้นตอนการเตรียมกระเป๋านักเรียน",
+          status: "ยังไม่สอน",
+          note: "ตัวอย่างสำหรับนำเข้า"
+        },
+        {
+          subject: "ออกแบบและเทคโนโลยี",
+          grade: "ม.1",
+          semester: "2",
+          hour_no: 1,
+          date: "",
+          topic: "ปัญหาและความต้องการ",
+          objective: "นักเรียนระบุปัญหาในโรงเรียนและผู้เกี่ยวข้องได้",
+          activity: "สำรวจปัญหาและบันทึกข้อมูล",
+          knowledge_sheet: "ใบความรู้กระบวนการออกแบบ",
+          worksheet: "ใบงานวิเคราะห์ปัญหา",
+          assignment: "ถ่ายภาพหรือจดปัญหาที่พบ 1 เรื่อง",
+          status: "ยังไม่สอน",
+          note: ""
+        }
+      ];
+    }
+
+    function parseCsv(text) {
+      const rows = [];
+      let row = [], value = "", quote = false;
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i], next = text[i + 1];
+        if (char === '"' && quote && next === '"') { value += '"'; i++; }
+        else if (char === '"') quote = !quote;
+        else if (char === "," && !quote) { row.push(value); value = ""; }
+        else if ((char === "\n" || char === "\r") && !quote) {
+          if (char === "\r" && next === "\n") i++;
+          row.push(value);
+          if (row.some(cell => cell.trim())) rows.push(row);
+          row = [];
+          value = "";
+        } else value += char;
+      }
+      row.push(value);
+      if (row.some(cell => cell.trim())) rows.push(row);
+      const header = rows.shift()?.map(item => item.trim()) || [];
+      return rows.map(cells => Object.fromEntries(header.map((key, index) => [key, cells[index] || ""])));
+    }
+
+    async function importFile() {
+      const file = document.getElementById("importFile").files[0];
+      if (!file) return showNotice("กรุณาเลือกไฟล์ก่อนนำเข้า", true);
+      let imported;
+      const lowerName = file.name.toLowerCase();
+      if (lowerName.endsWith(".xlsx")) {
+        try {
+          imported = rowsToState(await parseXlsx(file));
+        } catch (error) {
+          return showNotice(error.message || "อ่านไฟล์ Excel ไม่สำเร็จ", true);
+        }
+      } else {
+        const text = await file.text();
+        if (lowerName.endsWith(".json")) {
+        const json = JSON.parse(text);
+        imported = Array.isArray(json) ? rowsToState(json) : normalizeState(json);
+        } else {
+          imported = rowsToState(parseCsv(text));
+        }
+      }
+      mergeImported(imported);
+      showNotice("นำเข้าข้อมูลเรียบร้อยแล้ว");
+      render();
+    }
+
+    async function parseXlsx(file) {
+      const files = await unzipXlsx(new Uint8Array(await file.arrayBuffer()));
+      const sheet = files["xl/worksheets/sheet1.xml"];
+      if (!sheet) throw new Error("ไม่พบชีตข้อมูลในไฟล์ Excel");
+      const sharedStrings = files["xl/sharedStrings.xml"] ? parseSharedStrings(files["xl/sharedStrings.xml"]) : [];
+      const rows = worksheetXmlToRows(sheet, sharedStrings);
+      const header = rows.shift() || [];
+      return rows.map(cells => Object.fromEntries(header.map((key, index) => [key, cells[index] || ""])));
+    }
+
+    async function unzipXlsx(bytes) {
+      const decoder = new TextDecoder();
+      const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+      let eocd = -1;
+      for (let i = bytes.length - 22; i >= 0; i--) {
+        if (view.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+      }
+      if (eocd < 0) return unzipStore(bytes);
+      const entries = view.getUint16(eocd + 10, true);
+      let dirOffset = view.getUint32(eocd + 16, true);
+      const files = {};
+      for (let i = 0; i < entries; i++) {
+        if (view.getUint32(dirOffset, true) !== 0x02014b50) break;
+        const method = view.getUint16(dirOffset + 10, true);
+        const compressedSize = view.getUint32(dirOffset + 20, true);
+        const nameLength = view.getUint16(dirOffset + 28, true);
+        const extraLength = view.getUint16(dirOffset + 30, true);
+        const commentLength = view.getUint16(dirOffset + 32, true);
+        const localOffset = view.getUint32(dirOffset + 42, true);
+        const name = decoder.decode(bytes.slice(dirOffset + 46, dirOffset + 46 + nameLength));
+        const localNameLength = view.getUint16(localOffset + 26, true);
+        const localExtraLength = view.getUint16(localOffset + 28, true);
+        const dataStart = localOffset + 30 + localNameLength + localExtraLength;
+        const compressed = bytes.slice(dataStart, dataStart + compressedSize);
+        if (method === 0) files[name] = decoder.decode(compressed);
+        else if (method === 8) files[name] = decoder.decode(await inflateRaw(compressed));
+        dirOffset += 46 + nameLength + extraLength + commentLength;
+      }
+      return files;
+    }
+
+    async function inflateRaw(bytes) {
+      if (!("DecompressionStream" in window)) {
+        throw new Error("เบราว์เซอร์นี้ยังอ่าน Excel ที่บีบอัดไม่ได้ โปรดใช้ Chrome/Edge รุ่นใหม่ หรือบันทึกเป็น CSV เพื่อนำเข้า");
+      }
+      const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+      return new Uint8Array(await new Response(stream).arrayBuffer());
+    }
+
+    function unzipStore(bytes) {
+      const decoder = new TextDecoder();
+      const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+      const files = {};
+      let offset = 0;
+      while (offset < bytes.length - 4) {
+        const sig = view.getUint32(offset, true);
+        if (sig !== 0x04034b50) break;
+        const method = view.getUint16(offset + 8, true);
+        const compressedSize = view.getUint32(offset + 18, true);
+        const fileNameLength = view.getUint16(offset + 26, true);
+        const extraLength = view.getUint16(offset + 28, true);
+        const nameStart = offset + 30;
+        const dataStart = nameStart + fileNameLength + extraLength;
+        const name = decoder.decode(bytes.slice(nameStart, nameStart + fileNameLength));
+        if (method !== 0) throw new Error("ไฟล์ Excel นี้ถูกบีบอัด โปรดใช้ไฟล์ตัวอย่าง Excel ที่ดาวน์โหลดจากเว็บนี้ หรือบันทึกเป็น CSV เพื่อนำเข้า");
+        files[name] = decoder.decode(bytes.slice(dataStart, dataStart + compressedSize));
+        offset = dataStart + compressedSize;
+      }
+      return files;
+    }
+
+    function worksheetXmlToRows(xml, sharedStrings = []) {
+      const rows = [];
+      const rowMatches = xml.match(/<row[\s\S]*?<\/row>/g) || [];
+      rowMatches.forEach(rowXml => {
+        const cells = [];
+        const cellMatches = rowXml.match(/<c[\s\S]*?<\/c>/g) || [];
+        cellMatches.forEach(cellXml => {
+          const ref = cellXml.match(/r="([A-Z]+)\d+"/)?.[1] || "A";
+          const index = columnIndex(ref) - 1;
+          const rawValue = cellXml.match(/<v>([\s\S]*?)<\/v>/)?.[1] || "";
+          const text = cellXml.includes('t="s"')
+            ? sharedStrings[Number(rawValue)] || ""
+            : cellXml.match(/<t[^>]*>([\s\S]*?)<\/t>/)?.[1] || rawValue;
+          cells[index] = xmlUnescape(text);
+        });
+        rows.push(cells.map(cell => cell || ""));
+      });
+      return rows;
+    }
+
+    function parseSharedStrings(xml) {
+      return (xml.match(/<si[\s\S]*?<\/si>/g) || []).map(item => {
+        const parts = item.match(/<t[^>]*>([\s\S]*?)<\/t>/g) || [];
+        return xmlUnescape(parts.map(part => part.replace(/<[^>]+>/g, "")).join(""));
+      });
+    }
+
+    function columnIndex(name) {
+      return name.split("").reduce((sum, char) => sum * 26 + char.charCodeAt(0) - 64, 0);
+    }
+
+    function xmlUnescape(value) {
+      return String(value || "").replace(/&(lt|gt|amp|apos|quot);/g, (_, entity) => ({ lt: "<", gt: ">", amp: "&", apos: "'", quot: '"' }[entity]));
+    }
+
+    function rowsToState(rows) {
+      const courses = [];
+      const lessons = [];
+      rows.forEach(row => {
+        const subject = row.subject || "";
+        const grade = row.grade || "";
+        const semester = String(row.semester || "1");
+        if (!subject || !grade) return;
+        let course = courses.find(c => c.subject === subject && c.grade === grade && c.semester === semester);
+        if (!course) {
+          course = { id: uid("course"), subject, grade, semester, hours: 0, description: `${subject} ${grade} ภาคเรียนที่ ${semester}` };
+          courses.push(course);
+        }
+        course.hours = Math.max(course.hours, Number(row.hour_no || 0));
+        lessons.push({
+          id: uid("lesson"),
+          courseId: course.id,
+          subject,
+          grade,
+          semester,
+          hour_no: Number(row.hour_no || 1),
+          date: row.date || "",
+          topic: row.topic || "",
+          objective: row.objective || "",
+          activity: row.activity || "",
+          knowledge_sheet: row.knowledge_sheet || "",
+          worksheet: row.worksheet || "",
+          assignment: row.assignment || "",
+          status: statuses.includes(row.status) ? row.status : "ยังไม่สอน",
+          note: row.note || ""
+        });
+      });
+      courses.forEach(course => { if (!course.hours) course.hours = 20; });
+      return { courses, lessons };
+    }
+
+    function mergeImported(imported) {
+      imported.courses.forEach(course => {
+        let target = state.courses.find(c => c.subject === course.subject && c.grade === course.grade && c.semester === String(course.semester));
+        if (!target) {
+          target = { ...course, id: uid("course"), semester: String(course.semester) };
+          state.courses.push(target);
+        } else {
+          target.hours = Number(course.hours || target.hours || 20);
+          target.description = course.description || target.description;
+        }
+        state.lessons = state.lessons.filter(lesson => !(lesson.subject === target.subject && lesson.grade === target.grade && String(lesson.semester) === target.semester));
+        imported.lessons
+          .filter(lesson => lesson.subject === target.subject && lesson.grade === target.grade && String(lesson.semester) === target.semester)
+          .forEach(lesson => state.lessons.push({ ...lesson, id: uid("lesson"), courseId: target.id, semester: target.semester }));
+      });
+      selectedCourseId = state.courses[0]?.id || "";
+    }
+
+    function showNotice(message, isError = false) {
+      const notice = document.getElementById("manageNotice");
+      notice.textContent = message;
+      notice.style.background = isError ? "#fff1f0" : "#ecfdf3";
+      notice.style.color = isError ? "#912018" : "#075334";
+      notice.style.borderColor = isError ? "#fecdca" : "#a9e7c4";
+      notice.classList.add("show");
+      setTimeout(() => notice.classList.remove("show"), 3200);
+    }
+
+    function openReport() {
+      renderReport();
+      openModal("reportModal");
+    }
+
+    function renderReport() {
+      const lessons = getVisibleLessons();
+      const done = lessons.filter(isDone).length;
+      const moved = lessons.filter(lesson => lesson.status === "เลื่อน").length;
+      const todo = lessons.filter(lesson => lesson.status === "ยังไม่สอน").length;
+      const percent = lessons.length ? Math.round(done / lessons.length * 100) : 0;
+      const next = lessons.find(lesson => !isDone(lesson));
+      document.getElementById("reportSummary").innerHTML = [
+        ["ทั้งหมด", `${lessons.length} ชม.`],
+        ["สอนแล้ว", `${done} ชม. (${percent}%)`],
+        ["ยังไม่สอน", `${todo} ชม.`],
+        ["เลื่อน", `${moved} ชม.`]
+      ].map(([label, value]) => `<div class="mini"><b>${value}</b><span>${label}</span></div>`).join("");
+      const rows = [
+        ["ชั่วโมงถัดไป", next ? `ชั่วโมง ${next.hour_no}: ${escapeHtml(next.topic)}` : "ครบทุกชั่วโมงแล้ว"],
+        ["ใบงานที่ใช้", `${lessons.filter(lesson => lesson.worksheet).length} รายการ`],
+        ["ใบความรู้/สื่อ", `${lessons.filter(lesson => lesson.knowledge_sheet).length} รายการ`],
+        ["งานเพิ่มเติม", `${lessons.filter(lesson => lesson.assignment).length} รายการ`]
+      ];
+      document.getElementById("reportList").innerHTML = rows.map(([label, value]) => `
+        <div class="report-line">
+          <strong>${label}</strong>
+          <span>${value}</span>
+          <span></span>
+        </div>
+      `).join("") + lessons.slice(0, 8).map(lesson => `
+        <div class="report-line">
+          <strong>ชั่วโมง ${lesson.hour_no}</strong>
+          <span>${escapeHtml(lesson.topic)}<br><span class="muted">${escapeHtml(lesson.date || "ยังไม่ลงวันที่")}</span></span>
+          ${statusBadge(lesson.status)}
+        </div>
+      `).join("");
+    }
+
+    function printReport() {
+      const title = document.getElementById("viewTitle").textContent;
+      const content = document.getElementById("reportSummary").outerHTML + document.getElementById("reportList").outerHTML;
+      const win = window.open("", "_blank");
+      win.document.write(`<!doctype html><html lang="th"><head><meta charset="utf-8"><title>${escapeHtml(title)}</title><style>body{font-family:Tahoma,sans-serif;color:#18212f;padding:24px}h1{font-size:20px}.report-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.mini,.report-line{border:1px solid #dce2ea;border-radius:8px;padding:10px;margin-bottom:8px}.mini b{display:block;font-size:20px}.muted{color:#657083}.badge{font-size:12px}</style></head><body><h1>${escapeHtml(title)}</h1>${content}</body></html>`);
+      win.document.close();
+      win.print();
+    }
+
+    document.getElementById("searchInput").addEventListener("input", render);
+    ["subjectFilter", "gradeFilter", "semesterFilter", "statusFilter"].forEach(id => document.getElementById(id).addEventListener("change", render));
+    document.getElementById("clearFiltersBtn").addEventListener("click", () => {
+      document.getElementById("searchInput").value = "";
+      document.getElementById("subjectFilter").value = "";
+      document.getElementById("gradeFilter").value = "";
+      document.getElementById("semesterFilter").value = "";
+      document.getElementById("statusFilter").value = "";
+      selectedCourseId = "";
+      render();
+    });
+    document.getElementById("scheduleDate").addEventListener("change", event => {
+      selectedScheduleDate = event.target.value || new Date().toISOString().slice(0, 10);
+      renderTodaySchedule();
+      renderIcons();
+    });
+    document.getElementById("addHourBtn").addEventListener("click", () => openLesson());
+    document.getElementById("teachTodayBtn").addEventListener("click", () => markNextDone());
+    document.getElementById("tableViewBtn").addEventListener("click", () => {
+      currentView = "table";
+      applyViewMode();
+    });
+    document.getElementById("timelineViewBtn").addEventListener("click", () => {
+      currentView = "timeline";
+      applyViewMode();
+    });
+    document.getElementById("weekTableViewBtn").addEventListener("click", () => {
+      currentView = "week";
+      applyViewMode();
+    });
+    document.getElementById("weekViewBtn").addEventListener("click", () => {
+      currentView = "week";
+      applyViewMode();
+    });
+    document.getElementById("lessonForm").addEventListener("submit", saveLesson);
+    document.getElementById("deleteLessonBtn").addEventListener("click", () => removeLesson(document.getElementById("lessonId").value));
+    document.getElementById("manageBtn").addEventListener("click", () => openModal("manageModal"));
+    document.getElementById("reportBtn").addEventListener("click", openReport);
+    document.getElementById("exportBtn").addEventListener("click", () => exportXlsx());
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      const answer = prompt("การล้างข้อมูลจะลบข้อมูลที่บันทึกไว้ในเครื่องนี้ทั้งหมด หากต้องการทำต่อให้พิมพ์: ล้างข้อมูล");
+      if (answer !== "ล้างข้อมูล") return;
+      state = createSeedData();
+      selectedCourseId = state.courses[0]?.id || "";
+      render();
+      showNotice("ล้างข้อมูลและโหลดตัวอย่างใหม่แล้ว");
+    });
+    document.getElementById("courseForm").addEventListener("submit", saveCourse);
+    document.getElementById("newCourseBtn").addEventListener("click", resetCourseForm);
+    document.getElementById("importBtn").addEventListener("click", importFile);
+    document.getElementById("downloadXlsxBtn").addEventListener("click", () => exportXlsx(sampleRows(), "donseenuan-sample-import.xlsx"));
+    document.getElementById("downloadCsvBtn").addEventListener("click", () => exportCsv(sampleRows()));
+    document.getElementById("downloadJsonBtn").addEventListener("click", () => exportJson(rowsToState(sampleRows()), "donseenuan-sample-import.json"));
+    document.getElementById("exportXlsxBtn").addEventListener("click", () => exportXlsx());
+    document.getElementById("exportJsonBtn").addEventListener("click", () => exportJson());
+    document.getElementById("printReportBtn").addEventListener("click", printReport);
+    document.getElementById("exportReportBtn").addEventListener("click", () => exportXlsx(getVisibleLessons(), `donseenuan-report-${todayText()}.xlsx`));
+    document.querySelectorAll("[data-close]").forEach(btn => btn.addEventListener("click", () => closeModal(btn.dataset.close)));
+    document.querySelectorAll(".modal").forEach(modal => modal.addEventListener("click", event => {
+      if (event.target === modal) closeModal(modal.id);
+    }));
+    document.querySelectorAll(".tab").forEach(tab => tab.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach(item => item.classList.remove("active"));
+      document.querySelectorAll("#coursesTab,#importTab,#sampleTab").forEach(item => item.hidden = true);
+      tab.classList.add("active");
+      document.getElementById(tab.dataset.tab).hidden = false;
+    }));
+
+    resetCourseForm();
+    render();
+  </script>
+</body>
+</html>
