@@ -772,7 +772,10 @@
         <div class="brandline">
           <div class="school-mark">523</div>
           <div>
-            <h1>โรงเรียนดอนสีนวน (สำนักงานสลากกินแบ่งสงเคราะห์ 523)</h1>
+            <h1 style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+              โรงเรียนดอนสีนวน (สำนักงานสลากกินแบ่งสงเคราะห์ 523)
+              <span id="syncIndicator" style="font-size: 11px; font-weight: normal; color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.12); padding: 2px 8px; border-radius: 99px; display: none;"></span>
+            </h1>
             <div class="subtitle">ระบบติดตามการจัดการเรียนการสอนรายชั่วโมง ป.1-ป.6 และ ม.1-ม.3</div>
           </div>
         </div>
@@ -969,6 +972,7 @@
       <div class="tabs">
         <button class="tab active" data-tab="coursesTab">รายวิชา</button>
         <button class="tab" data-tab="importTab">นำเข้า/ส่งออก</button>
+        <button class="tab" data-tab="sheetsTab">ตั้งค่า Google Sheets</button>
         <button class="tab" data-tab="sampleTab">โครงสร้างไฟล์ตัวอย่าง</button>
       </div>
       <div class="manage-body">
@@ -1043,6 +1047,116 @@
                 <tr><td>note</td><td>หมายเหตุ</td><td>ปรับตามเวลาเรียนจริง</td></tr>
               </tbody>
             </table>
+          </div>
+        </section>
+
+        <section id="sheetsTab" hidden>
+          <div class="import-box">
+            <strong>ตั้งค่าการสำรองข้อมูลอัตโนมัติไปยัง Google Sheets</strong>
+            <div style="margin-top: 10px; display: grid; gap: 12px;">
+              <label>Google Apps Script Web App URL
+                <input id="sheetsUrlInput" placeholder="https://script.google.com/macros/s/.../exec">
+              </label>
+              <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer;">
+                <input id="sheetsAutoSync" type="checkbox" style="width: auto; min-height: auto; margin: 0;">
+                สำรองข้อมูลอัตโนมัติไปยัง Google Sheets ทุกครั้งที่ข้อมูลในระบบมีการเปลี่ยนแปลง
+              </label>
+              <div class="footer-actions" style="padding: 10px 0 0; border: 0; justify-content: flex-start; gap: 8px;">
+                <button id="sheetsTestBtn" type="button"><span data-icon="refresh"></span>ทดสอบการเชื่อมต่อ</button>
+                <button id="sheetsSyncBtn" type="button" class="primary"><span data-icon="upload"></span>บันทึกและสำรองข้อมูลทันที</button>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 15px; padding: 15px; border: 1px solid var(--line); border-radius: 8px; background: #fafcfe; font-size: 13px; line-height: 1.5;">
+            <strong style="display: block; margin-bottom: 8px; color: var(--brand);">📋 วิธีการติดตั้งและเชื่อมต่อกับ Google Sheets:</strong>
+            <ol style="margin: 0; padding-left: 20px; display: grid; gap: 6px;">
+              <li>สร้าง Google Sheets ใหม่บน Google Drive ของคุณ</li>
+              <li>ไปที่เมนู <strong>ส่วนขยาย (Extensions)</strong> &gt; <strong>Apps Script</strong></li>
+              <li>ลบโค้ดเดิมทั้งหมดในหน้าต่าง Apps Script ออก แล้วคัดลอกโค้ดด้านล่างนี้ไปวาง</li>
+              <li>คลิกปุ่ม <strong>บันทึก (Save)</strong> ด้านบน</li>
+              <li>คลิกปุ่ม <strong>การทำให้ใช้งานได้ (Deploy)</strong> &gt; <strong>การใช้งานจัดวางใหม่ (New deployment)</strong></li>
+              <li>เลือกประเภทเป็น <strong>เว็บแอป (Web app)</strong></li>
+              <li>ตั้งค่าตัวเลือกดังนี้:
+                <ul style="margin: 4px 0 0; padding-left: 20px;">
+                  <li>คำอธิบาย: บันทึกความคืบหน้าการสอน</li>
+                  <li>ผู้ที่เข้าถึงได้ (Who has access): <strong>ทุกคน (Anyone)</strong> (จำเป็นเพื่อเปิดรับข้อมูลจากภายนอก)</li>
+                </ul>
+              </li>
+              <li>คลิกปุ่ม <strong>การทำให้ใช้งานได้ (Deploy)</strong> แล้วอนุญาตสิทธิ์การเข้าถึง (Authorize access) บัญชีของคุณ</li>
+              <li>คัดลอก <strong>URL เว็บแอป (Web app URL)</strong> ที่ได้ นำมาวางในช่องรับข้อมูลด้านบนนี้ แล้วกดปุ่มบันทึก</li>
+            </ol>
+            <div style="margin-top: 12px;">
+              <strong style="display: block; margin-bottom: 6px;">💻 โค้ด Apps Script สำหรับคัดลอก:</strong>
+              <textarea id="appsScriptCode" readonly style="min-height: 140px; font-family: monospace; font-size: 12px; background: #f1f5f9; border-color: #cbd5e1;" onclick="this.select()">function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+    
+    // หากเป็นการทดสอบการเชื่อมต่อ ให้ตอบกลับทันทีโดยไม่แก้ไขข้อมูลในชีต
+    if (data.isTest) {
+      return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Connected" }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    
+    // 1. จัดการชีตรายวิชา (Courses)
+    let coursesSheet = ss.getSheetByName("Courses");
+    if (!coursesSheet) {
+      coursesSheet = ss.insertSheet("Courses");
+    } else {
+      coursesSheet.clear();
+    }
+    const coursesHeader = ["id", "subject", "grade", "semester", "hours", "description"];
+    coursesSheet.appendRow(coursesHeader);
+    if (data.courses && data.courses.length > 0) {
+      const coursesRows = data.courses.map(c => [
+        c.id, c.subject, c.grade, c.semester, c.hours, c.description || ""
+      ]);
+      coursesSheet.getRange(2, 1, coursesRows.length, coursesHeader.length).setValues(coursesRows);
+    }
+    
+    // 2. จัดการชีตชั่วโมงสอน (Lessons)
+    let lessonsSheet = ss.getSheetByName("Lessons");
+    if (!lessonsSheet) {
+      lessonsSheet = ss.insertSheet("Lessons");
+    } else {
+      lessonsSheet.clear();
+    }
+    const lessonsHeader = [
+      "id", "courseId", "subject", "grade", "semester", "hour_no", 
+      "date", "topic", "objective", "activity", "knowledge_sheet", 
+      "worksheet", "assignment", "status", "note"
+    ];
+    lessonsSheet.appendRow(lessonsHeader);
+    if (data.lessons && data.lessons.length > 0) {
+      const lessonsRows = data.lessons.map(l => [
+        l.id, l.courseId, l.subject, l.grade, l.semester, l.hour_no,
+        l.date || "", l.topic || "", l.objective || "", l.activity || "",
+        l.knowledge_sheet || "", l.worksheet || "", l.assignment || "",
+        l.status || "ยังไม่สอน", l.note || ""
+      ]);
+      lessonsSheet.getRange(2, 1, lessonsRows.length, lessonsHeader.length).setValues(lessonsRows);
+    }
+    
+    // 3. จัดการจัดรูปแบบตารางให้สวยงาม
+    [coursesSheet, lessonsSheet].forEach(sheet => {
+      sheet.getRange(1, 1, 1, sheet.getLastColumn())
+        .setBackground("#1a3a6b") // สีน้ำเงินหลักของโรงเรียนดอนสีนวน
+        .setFontColor("#ffffff")
+        .setFontWeight("bold")
+        .setHorizontalAlignment("center");
+      sheet.autoResizeColumns(1, sheet.getLastColumn());
+    });
+    
+    return ContentService.createTextOutput(JSON.stringify({ status: "success" }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}</textarea>
+            </div>
           </div>
         </section>
       </div>
@@ -1144,7 +1258,9 @@
     function normalizeState(data) {
       const normalized = {
         courses: Array.isArray(data.courses) ? data.courses : [],
-        lessons: Array.isArray(data.lessons) ? data.lessons : []
+        lessons: Array.isArray(data.lessons) ? data.lessons : [],
+        googleSheetsUrl: typeof data.googleSheetsUrl === "string" ? data.googleSheetsUrl : "",
+        autoSyncEnabled: typeof data.autoSyncEnabled === "boolean" ? data.autoSyncEnabled : false
       };
       stripGeneratedExtras(normalized.lessons);
       return normalized;
@@ -1160,6 +1276,9 @@
 
     function saveState() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      if (state.googleSheetsUrl && state.autoSyncEnabled) {
+        syncToGoogleSheets(true);
+      }
     }
 
     function createSeedData() {
@@ -2740,12 +2859,129 @@
     }));
     document.querySelectorAll(".tab").forEach(tab => tab.addEventListener("click", () => {
       document.querySelectorAll(".tab").forEach(item => item.classList.remove("active"));
-      document.querySelectorAll("#coursesTab,#importTab,#sampleTab").forEach(item => item.hidden = true);
+      document.querySelectorAll(".manage-body > section").forEach(item => item.hidden = true);
       tab.classList.add("active");
       document.getElementById(tab.dataset.tab).hidden = false;
     }));
 
+    async function syncToGoogleSheets(isSilent = false) {
+      if (!state.googleSheetsUrl) {
+        if (!isSilent) showNotice("กรุณาตั้งค่า URL Google Apps Script ก่อน", true);
+        return;
+      }
+      
+      const indicator = document.getElementById("syncIndicator");
+      if (indicator) {
+        indicator.style.display = "inline-flex";
+        indicator.textContent = "☁️ กำลังซิงค์ข้อมูล...";
+        indicator.style.color = "rgba(255, 255, 255, 0.9)";
+      }
+      
+      try {
+        const payload = {
+          courses: state.courses,
+          lessons: state.lessons
+        };
+        
+        const response = await fetch(state.googleSheetsUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain"
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        const result = await response.json();
+        if (result.status === "success") {
+          const nowStr = new Date().toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" });
+          if (!isSilent) showNotice("สำรองข้อมูลไปยัง Google Sheets เรียบร้อยแล้ว");
+          if (indicator) {
+            indicator.textContent = `☁️ ซิงค์ Google Sheets แล้ว (${nowStr})`;
+            indicator.style.color = "#a7f3d0";
+          }
+        } else {
+          throw new Error(result.message || "เซิร์ฟเวอร์รายงานข้อผิดพลาด");
+        }
+      } catch (error) {
+        console.error("Sync error:", error);
+        if (!isSilent) showNotice(`ซิงค์ข้อมูลล้มเหลว: ${error.message}`, true);
+        if (indicator) {
+          indicator.textContent = "☁️ ซิงค์ข้อมูลล้มเหลว";
+          indicator.style.color = "#fecaca";
+        }
+      }
+    }
+
+    async function testGoogleSheetsConnection() {
+      const urlInput = document.getElementById("sheetsUrlInput").value.trim();
+      if (!urlInput) {
+        showNotice("กรุณากรอก URL ก่อนทดสอบ", true);
+        return;
+      }
+      
+      const testBtn = document.getElementById("sheetsTestBtn");
+      const originalText = testBtn.innerHTML;
+      testBtn.disabled = true;
+      testBtn.textContent = "กำลังทดสอบ...";
+      
+      try {
+        const payload = {
+          courses: [],
+          lessons: [],
+          isTest: true
+        };
+        
+        const response = await fetch(urlInput, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain"
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        const result = await response.json();
+        if (result.status === "success") {
+          showNotice("เชื่อมต่อกับ Google Sheets สำเร็จ!");
+        } else {
+          throw new Error(result.message || "เซิร์ฟเวอร์รายงานข้อผิดพลาด");
+        }
+      } catch (error) {
+        console.error("Connection test error:", error);
+        showNotice(`เชื่อมต่อล้มเหลว: ${error.message} (โปรดตรวจสอบการอนุญาตสิทธิ์ในเว็บแอป)`, true);
+      } finally {
+        testBtn.disabled = false;
+        testBtn.innerHTML = originalText;
+      }
+    }
+
+    function initGoogleSheetsUI() {
+      const urlInput = document.getElementById("sheetsUrlInput");
+      const autoSyncCheckbox = document.getElementById("sheetsAutoSync");
+      
+      if (urlInput) urlInput.value = state.googleSheetsUrl || "";
+      if (autoSyncCheckbox) autoSyncCheckbox.checked = !!state.autoSyncEnabled;
+      
+      const indicator = document.getElementById("syncIndicator");
+      if (state.googleSheetsUrl && indicator) {
+        indicator.style.display = "inline-flex";
+        indicator.textContent = "☁️ เชื่อมต่อ Google Sheets";
+      }
+    }
+
+    document.getElementById("sheetsTestBtn").addEventListener("click", testGoogleSheetsConnection);
+    document.getElementById("sheetsSyncBtn").addEventListener("click", () => {
+      const urlInput = document.getElementById("sheetsUrlInput").value.trim();
+      const autoSyncCheckbox = document.getElementById("sheetsAutoSync").checked;
+      
+      state.googleSheetsUrl = urlInput;
+      state.autoSyncEnabled = autoSyncCheckbox;
+      saveState();
+      
+      syncToGoogleSheets(false);
+    });
+
     resetCourseForm();
+    initGoogleSheetsUI();
     render();
   </script>
 </body>
